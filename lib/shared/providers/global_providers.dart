@@ -41,3 +41,24 @@ class LoyaltyPointsNotifier extends StateNotifier<int> {
     state += points;
   }
 }
+
+// Model untuk Notifikasi In-App Real-Time
+class InAppNotification {
+  final String title;
+  final String message;
+  final String orderId;
+  final String statusName;
+  final bool isSuccess;
+
+  const InAppNotification({
+    required this.title,
+    required this.message,
+    required this.orderId,
+    required this.statusName,
+    this.isSuccess = true,
+  });
+}
+
+// Provider untuk melacak notifikasi aktif
+final inAppNotificationProvider = StateProvider<InAppNotification?>((ref) => null);
+

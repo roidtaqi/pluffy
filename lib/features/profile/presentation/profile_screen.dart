@@ -5,6 +5,7 @@ import '../../../app/theme/app_colors.dart';
 import '../../../app/theme/app_text_styles.dart';
 import '../../../shared/data/mock_data.dart';
 import '../../../shared/providers/global_providers.dart';
+import '../../orders/data/orders_repository.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -29,6 +30,7 @@ class ProfileScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final points = ref.watch(loyaltyPointsProvider);
     final stamps = ref.watch(loyaltyStampsProvider);
+    final ordersState = ref.watch(ordersProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -253,6 +255,131 @@ class ProfileScreen extends ConsumerWidget {
                     ),
                   );
                 },
+              ),
+            ),
+            
+            const SizedBox(height: 28),
+
+            // Pluffy Admin Web Server Section
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text('Pluffy Admin Portal', style: AppTextStyles.h2),
+              ),
+            ),
+            const SizedBox(height: 10),
+            
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: AppColors.cardBg.withOpacity(0.4),
+                  borderRadius: BorderRadius.circular(24),
+                  border: Border.all(color: AppColors.border, width: 1.5),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(10),
+                          decoration: const BoxDecoration(
+                            color: AppColors.primary,
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(Icons.computer, color: Colors.white, size: 22),
+                        ),
+                        const SizedBox(width: 14),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Web Admin Server Active',
+                                style: AppTextStyles.h3.copyWith(fontSize: 14),
+                              ),
+                              const SizedBox(height: 2),
+                              Row(
+                                children: [
+                                  Container(
+                                    width: 8,
+                                    height: 8,
+                                    decoration: const BoxDecoration(
+                                      color: AppColors.success,
+                                      shape: BoxShape.circle,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 6),
+                                  Text(
+                                    'Listening on port ${ordersState.serverPort}',
+                                    style: AppTextStyles.bodySecondaryMedium.copyWith(
+                                      color: AppColors.success,
+                                      fontSize: 11,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    const Divider(height: 32),
+                    Text(
+                      'Buka link berikut di browser web Anda (Chrome/Firefox) untuk mengelola dapur, mengubah status hidangan secara manual, dan memicu notifikasi pelanggan!',
+                      style: AppTextStyles.bodySecondary.copyWith(fontSize: 12, height: 1.4),
+                    ),
+                    const SizedBox(height: 16),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                      decoration: BoxDecoration(
+                        color: AppColors.white,
+                        borderRadius: BorderRadius.circular(14),
+                        border: Border.all(color: AppColors.border, width: 1.0),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              'http://localhost:${ordersState.serverPort}/admin',
+                              style: AppTextStyles.bodyMedium.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.primary,
+                                fontSize: 13,
+                              ),
+                            ),
+                          ),
+                          InkWell(
+                            onTap: () {
+                              Clipboard.setData(ClipboardData(text: 'http://localhost:${ordersState.serverPort}/admin'));
+                              ScaffoldMessenger.of(context).clearSnackBars();
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: const Text('Link Web Admin disalin ke clipboard!'),
+                                  backgroundColor: AppColors.success,
+                                  behavior: SnackBarBehavior.floating,
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                ),
+                              );
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: AppColors.cardBg,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: const Icon(Icons.copy, size: 16, color: AppColors.primary),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
             

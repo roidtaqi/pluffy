@@ -1,39 +1,55 @@
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../shared/providers/global_providers.dart';
 import '../../cart/domain/cart_item.dart';
 import '../domain/order.dart';
+import 'admin_web_server.dart';
 
 class OrdersState {
   final List<OrderModel> orders;
   final OrderModel? activeOrder; // Currently tracking order
+  final bool autoSimulate;
+  final int serverPort;
 
   const OrdersState({
     this.orders = const [],
     this.activeOrder,
+    this.autoSimulate = true,
+    this.serverPort = 8080,
   });
 
   OrdersState copyWith({
     List<OrderModel>? orders,
     OrderModel? activeOrder,
+    bool? autoSimulate,
+    int? serverPort,
   }) {
     return OrdersState(
       orders: orders ?? this.orders,
       activeOrder: activeOrder, // Can set to null
+      autoSimulate: autoSimulate ?? this.autoSimulate,
+      serverPort: serverPort ?? this.serverPort,
     );
   }
 }
 
 class OrdersNotifier extends StateNotifier<OrdersState> {
+  final Ref _ref;
   Timer? _statusTimer;
+  AdminWebServer? _webServer;
 
-  OrdersNotifier() : super(const OrdersState()) {
+  OrdersState get currentState => state;
+
+  OrdersNotifier(this._ref) : super(const OrdersState()) {
     // Populate some initial mock order history
     _loadMockHistory();
+    // Start local web server
+    _startWebServer();
   }
 
   void _loadMockHistory() {
     final now = DateTime.now();
-    state = OrdersState(
+    state = state.copyWith(
       orders: [
         OrderModel(
           id: 'ORD-9821-H',
@@ -64,6 +80,31 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
         ),
       ],
     );
+  }
+
+  // Start the internal Web Admin local server
+  Future<void> _startWebServer() async {
+    try {
+      _webServer = AdminWebServer(
+        notifier: this,
+        port: 8080,
+      );
+      await _webServer!.start();
+      state = state.copyWith(serverPort: _webServer!.port);
+    } catch (e) {
+      // In case 8080 is taken, try a different port (e.g. 8081)
+      try {
+        _webServer = AdminWebServer(
+          notifier: this,
+          port: 8081,
+        );
+        await _webServer!.start();
+        state = state.copyWith(serverPort: _webServer!.port);
+      } catch (e) {
+        // Fallback print/log
+        print("Failed to start Pluffy Web Admin Server: $e");
+      }
+    }
   }
 
   // Create a new order from active checkout details
@@ -102,8 +143,10 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
       activeOrder: newOrder,
     );
 
-    // Start status progression simulator
-    _startStatusSimulation();
+    // Start status progression simulator if auto-simulation is enabled
+    if (state.autoSimulate) {
+      _startStatusSimulation();
+    }
 
     return orderId;
   }
@@ -114,12 +157,85 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
     return order.items;
   }
 
+  // Toggle auto-simulation from Admin Web or settings
+  void toggleAutoSimulate(bool value) {
+    state = state.copyWith(autoSimulate: value);
+    if (value) {
+      _startStatusSimulation();
+    } else {
+      _statusTimer?.cancel();
+    }
+  }
+
+  // Manually update the status of any order (e.g. via Web Admin or simulation)
+  void updateOrderStatus(String orderId, OrderStatus newStatus) {
+    final updatedOrders = state.orders.map((o) {
+      if (o.id == orderId) {
+        return o.copyWith(status: newStatus);
+      }
+      return o;
+    }).toList();
+
+    OrderModel? activeOrder = state.activeOrder;
+    if (activeOrder != null && activeOrder.id == orderId) {
+      activeOrder = activeOrder.copyWith(status: newStatus);
+      if (newStatus == OrderStatus.completed) {
+        activeOrder = null; // Clear active order upon completion
+      }
+    }
+
+    state = state.copyWith(
+      orders: updatedOrders,
+      activeOrder: activeOrder,
+    );
+
+    // Trigger local notification so customer receives it
+    _triggerNotificationForStatus(orderId, newStatus);
+  }
+
+  // Trigger global in-app notification state for real-time customer popups
+  void _triggerNotificationForStatus(String orderId, OrderStatus status) {
+    String title = "";
+    String message = "";
+
+    switch (status) {
+      case OrderStatus.placed:
+        title = "Order Placed! 🥞";
+        message = "We have received your order and payment successfully.";
+        break;
+      case OrderStatus.preparing:
+        title = "In the Kitchen! 🍳";
+        message = "Pluffy koki sedang memanggang soufflé lezat Anda dengan cinta!";
+        break;
+      case OrderStatus.ready:
+        title = "Hidangan Siap Diambil! 🥞🎉";
+        message = "Silakan menuju konter Shibuya. Tunjukkan ID pesanan: $orderId!";
+        break;
+      case OrderStatus.completed:
+        title = "Pesanan Selesai! ❤️";
+        message = "Terima kasih telah berkunjung ke Pluffy! Selamat menikmati hidangan hangat Anda.";
+        break;
+    }
+
+    _ref.read(inAppNotificationProvider.notifier).state = InAppNotification(
+      title: title,
+      message: message,
+      orderId: orderId,
+      statusName: status.displayName,
+    );
+  }
+
   // Simulate kitchen progress transitions for the active order
   void _startStatusSimulation() {
+    _statusTimer?.cancel();
     int currentStep = 0;
     
+    if (state.activeOrder != null) {
+      currentStep = state.activeOrder!.status.index;
+    }
+
     _statusTimer = Timer.periodic(const Duration(seconds: 15), (timer) {
-      if (state.activeOrder == null) {
+      if (state.activeOrder == null || !state.autoSimulate) {
         timer.cancel();
         return;
       }
@@ -136,28 +252,19 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
         timer.cancel();
       }
 
-      final updatedOrder = state.activeOrder!.copyWith(status: nextStatus);
-      
-      // Update active order and replace it in the orders list
-      final updatedOrdersList = state.orders.map((o) {
-        return o.id == updatedOrder.id ? updatedOrder : o;
-      }).toList();
-
-      state = OrdersState(
-        orders: updatedOrdersList,
-        activeOrder: nextStatus == OrderStatus.completed ? null : updatedOrder, // Clear active when fully done
-      );
+      updateOrderStatus(state.activeOrder!.id, nextStatus);
     });
   }
 
   @override
   void dispose() {
     _statusTimer?.cancel();
+    _webServer?.stop();
     super.dispose();
   }
 }
 
 // Global Provider for Orders
 final ordersProvider = StateNotifierProvider<OrdersNotifier, OrdersState>((ref) {
-  return OrdersNotifier();
+  return OrdersNotifier(ref);
 });

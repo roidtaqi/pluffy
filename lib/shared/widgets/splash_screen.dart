@@ -92,7 +92,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
                 ScaleTransition(
                   scale: _scaleAnimation,
                   child: Container(
-                    padding: const EdgeInsets.all(24),
+                    padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
                       color: AppColors.cardBg,
                       shape: BoxShape.circle,
@@ -105,10 +105,13 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
                         )
                       ],
                     ),
-                    child: const Icon(
-                      Icons.cake_outlined,
-                      size: 72,
-                      color: AppColors.primary,
+                    child: ClipOval(
+                      child: Image.asset(
+                        'assets/images/logo.png',
+                        width: 104,
+                        height: 104,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
                 ),
