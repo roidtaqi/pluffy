@@ -7,15 +7,16 @@ import '../../../shared/widgets/custom_text_field.dart';
 import '../../menu/domain/category.dart';
 import '../../menu/domain/product.dart';
 import 'product_detail_sheet.dart';
+import '../../../shared/providers/global_providers.dart';
 
-class MenuScreen extends StatefulWidget {
+class MenuScreen extends ConsumerStatefulWidget {
   const MenuScreen({Key? key}) : super(key: key);
 
   @override
-  State<MenuScreen> createState() => _MenuScreenState();
+  ConsumerState<MenuScreen> createState() => _MenuScreenState();
 }
 
-class _MenuScreenState extends State<MenuScreen> {
+class _MenuScreenState extends ConsumerState<MenuScreen> {
   String _selectedCategoryId = MockData.categories.first.id;
   String _searchQuery = '';
   final TextEditingController _searchController = TextEditingController();
@@ -26,8 +27,8 @@ class _MenuScreenState extends State<MenuScreen> {
     super.dispose();
   }
 
-  List<Product> _getFilteredProducts() {
-    return MockData.products.where((product) {
+  List<Product> _getFilteredProducts(List<Product> products) {
+    return products.where((product) {
       final matchesCategory = product.categoryId == _selectedCategoryId;
       final matchesSearch = product.name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
           product.description.toLowerCase().contains(_searchQuery.toLowerCase());
@@ -41,7 +42,9 @@ class _MenuScreenState extends State<MenuScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final filteredProducts = _getFilteredProducts();
+    final productsAsync = ref.watch(productsProvider);
+    final products = productsAsync.value ?? MockData.products;
+    final filteredProducts = _getFilteredProducts(products);
 
     return Scaffold(
       appBar: AppBar(
@@ -296,7 +299,7 @@ class _MenuScreenState extends State<MenuScreen> {
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    '\$${product.basePrice.toStringAsFixed(2)}',
+                                    formatPrice(product.basePrice),
                                     style: AppTextStyles.priceRegular,
                                   ),
                                   Container(

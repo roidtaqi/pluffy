@@ -129,7 +129,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        'Premium Japanese Dessert Café',
+                        'Premium Pastry - Pâtissier',
                         style: AppTextStyles.bodySecondaryMedium.copyWith(
                           color: AppColors.primary.withOpacity(0.8),
                           letterSpacing: 1.0,

@@ -133,7 +133,7 @@ class OrderSuccessScreen extends ConsumerWidget {
                                 ),
                               ),
                               Text(
-                                '\$${item.totalPrice.toStringAsFixed(2)}',
+                                formatPrice(item.totalPrice),
                                 style: AppTextStyles.bodyMedium.copyWith(fontSize: 13),
                               ),
                             ],
@@ -148,7 +148,7 @@ class OrderSuccessScreen extends ConsumerWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text('Subtotal', style: AppTextStyles.bodySecondary),
-                          Text('\$${order.subtotal.toStringAsFixed(2)}', style: AppTextStyles.bodySecondaryMedium),
+                          Text(formatPrice(order.subtotal), style: AppTextStyles.bodySecondaryMedium),
                         ],
                       ),
                       
@@ -159,7 +159,7 @@ class OrderSuccessScreen extends ConsumerWidget {
                           children: [
                             Text('Discount', style: AppTextStyles.bodySecondary.copyWith(color: AppColors.success)),
                             Text(
-                              '-\$${order.discount.toStringAsFixed(2)}',
+                              '-${formatPrice(order.discount)}',
                               style: AppTextStyles.bodySecondaryMedium.copyWith(color: AppColors.success),
                             ),
                           ],
@@ -171,7 +171,7 @@ class OrderSuccessScreen extends ConsumerWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text('Service Tax (10%)', style: AppTextStyles.bodySecondary),
-                          Text('\$${order.tax.toStringAsFixed(2)}', style: AppTextStyles.bodySecondaryMedium),
+                          Text(formatPrice(order.tax), style: AppTextStyles.bodySecondaryMedium),
                         ],
                       ),
                       const SizedBox(height: 4),
@@ -179,7 +179,7 @@ class OrderSuccessScreen extends ConsumerWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text('Packaging Fee', style: AppTextStyles.bodySecondary),
-                          Text('\$${order.serviceFee.toStringAsFixed(2)}', style: AppTextStyles.bodySecondaryMedium),
+                          Text(formatPrice(order.serviceFee), style: AppTextStyles.bodySecondaryMedium),
                         ],
                       ),
                       
@@ -190,7 +190,7 @@ class OrderSuccessScreen extends ConsumerWidget {
                         children: [
                           Text('Total Paid', style: AppTextStyles.h2),
                           Text(
-                            '\$${order.total.toStringAsFixed(2)}',
+                            formatPrice(order.total),
                             style: AppTextStyles.priceLarge.copyWith(fontSize: 18),
                           ),
                         ],

@@ -37,7 +37,7 @@ class _PaymentSheetState extends ConsumerState<PaymentSheet> {
     {
       'id': 'wallet',
       'title': 'Pluffy Pay Wallet',
-      'subtitle': 'Balance: \$50.00',
+      'subtitle': 'Saldo: Rp 500.000',
       'icon': Icons.account_balance_wallet_outlined,
     },
     {
@@ -70,7 +70,7 @@ class _PaymentSheetState extends ConsumerState<PaymentSheet> {
     final selectedMethod = _paymentMethods.firstWhere((m) => m['id'] == _selectedMethodId);
     
     // 1. Write order to global orders database
-    final orderId = ref.read(ordersProvider.notifier).placeOrder(
+    final orderId = await ref.read(ordersProvider.notifier).placeOrder(
           items: cart.items,
           subtotal: cart.subtotal,
           discount: cart.discountAmount,
@@ -82,15 +82,7 @@ class _PaymentSheetState extends ConsumerState<PaymentSheet> {
           voucherCode: cart.appliedVoucherCode,
         );
 
-    // 2. Adjust loyalty points (1 point per dollar spent)
-    ref.read(loyaltyPointsProvider.notifier).addPoints(cart.total.toInt());
-    
-    // 3. Earn stamps (1 stamp per order containing items)
-    if (cart.items.isNotEmpty) {
-      ref.read(loyaltyStampsProvider.notifier).addStamps(1);
-    }
-
-    // 4. Clear active checkout cart
+    // 2. Clear active checkout cart
     ref.read(cartProvider.notifier).clear();
 
     setState(() {
@@ -223,14 +215,14 @@ class _PaymentSheetState extends ConsumerState<PaymentSheet> {
                   children: [
                     Text('Total Payment', style: AppTextStyles.bodyMedium),
                     Text(
-                      '\$${cart.total.toStringAsFixed(2)}',
+                      formatPrice(cart.total),
                       style: AppTextStyles.priceLarge.copyWith(fontSize: 20),
                     ),
                   ],
                 ),
                 const SizedBox(height: 16),
                 CustomButton(
-                  text: _isPaying ? 'Authorizing...' : 'Pay Now — \$${cart.total.toStringAsFixed(2)}',
+                  text: _isPaying ? 'Authorizing...' : 'Pay Now — ${formatPrice(cart.total)}',
                   isLoading: _isPaying,
                   onPressed: _isPaying ? null : _processPayment,
                 ),

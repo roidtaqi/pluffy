@@ -227,7 +227,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
-                                        '\$${item.totalPrice.toStringAsFixed(2)}',
+                                        formatPrice(item.totalPrice),
                                         style: AppTextStyles.priceRegular.copyWith(fontSize: 15),
                                       ),
                                       
@@ -402,7 +402,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text('Subtotal', style: AppTextStyles.bodySecondaryMedium),
-                              Text('\$${cart.subtotal.toStringAsFixed(2)}', style: AppTextStyles.bodyMedium),
+                              Text(formatPrice(cart.subtotal), style: AppTextStyles.bodyMedium),
                             ],
                           ),
                           const SizedBox(height: 6),
@@ -416,7 +416,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                                   style: AppTextStyles.bodySecondaryMedium.copyWith(color: AppColors.success),
                                 ),
                                 Text(
-                                  '-\$${cart.discountAmount.toStringAsFixed(2)}',
+                                  '-${formatPrice(cart.discountAmount)}',
                                   style: AppTextStyles.bodyMedium.copyWith(
                                     color: AppColors.success,
                                     fontWeight: FontWeight.bold,
@@ -431,7 +431,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text('Service Tax (10%)', style: AppTextStyles.bodySecondaryMedium),
-                              Text('\$${cart.taxAmount.toStringAsFixed(2)}', style: AppTextStyles.bodyMedium),
+                              Text(formatPrice(cart.taxAmount), style: AppTextStyles.bodyMedium),
                             ],
                           ),
                           const SizedBox(height: 6),
@@ -439,7 +439,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text('Packaging & Handling', style: AppTextStyles.bodySecondaryMedium),
-                              Text('\$${cart.serviceFee.toStringAsFixed(2)}', style: AppTextStyles.bodyMedium),
+                              Text(formatPrice(cart.serviceFee), style: AppTextStyles.bodyMedium),
                             ],
                           ),
                           
@@ -450,7 +450,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                             children: [
                               Text('Grand Total', style: AppTextStyles.h2),
                               Text(
-                                '\$${cart.total.toStringAsFixed(2)}',
+                                formatPrice(cart.total),
                                 style: AppTextStyles.priceLarge.copyWith(fontSize: 20),
                               ),
                             ],

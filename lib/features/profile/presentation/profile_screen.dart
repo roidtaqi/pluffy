@@ -31,6 +31,20 @@ class ProfileScreen extends ConsumerWidget {
     final points = ref.watch(loyaltyPointsProvider);
     final stamps = ref.watch(loyaltyStampsProvider);
     final ordersState = ref.watch(ordersProvider);
+    final profileAsync = ref.watch(userProfileProvider);
+
+    final userName = profileAsync.maybeWhen(
+      data: (user) => user.name,
+      orElse: () => MockData.userName,
+    );
+    final userEmail = profileAsync.maybeWhen(
+      data: (user) => user.email,
+      orElse: () => MockData.userEmail,
+    );
+    final membershipTier = profileAsync.maybeWhen(
+      data: (user) => user.membershipTier,
+      orElse: () => MockData.membershipTier,
+    );
 
     return Scaffold(
       appBar: AppBar(
@@ -75,12 +89,12 @@ class ProfileScreen extends ConsumerWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            MockData.userName,
+                            userName,
                             style: AppTextStyles.h2,
                           ),
                           const SizedBox(height: 2),
                           Text(
-                            MockData.userEmail,
+                            userEmail,
                             style: AppTextStyles.bodySecondary,
                           ),
                           const SizedBox(height: 8),
@@ -98,7 +112,7 @@ class ProfileScreen extends ConsumerWidget {
                                 const Icon(Icons.stars, color: AppColors.cardBg, size: 14),
                                 const SizedBox(width: 6),
                                 Text(
-                                  MockData.membershipTier,
+                                  membershipTier,
                                   style: AppTextStyles.badgeText.copyWith(
                                     color: AppColors.cardBg,
                                     fontSize: 10,
@@ -345,7 +359,7 @@ class ProfileScreen extends ConsumerWidget {
                         children: [
                           Expanded(
                             child: Text(
-                              'http://localhost:${ordersState.serverPort}/admin',
+                              'http://127.0.0.1:${ordersState.serverPort}/admin',
                               style: AppTextStyles.bodyMedium.copyWith(
                                 fontWeight: FontWeight.bold,
                                 color: AppColors.primary,
@@ -355,7 +369,7 @@ class ProfileScreen extends ConsumerWidget {
                           ),
                           InkWell(
                             onTap: () {
-                              Clipboard.setData(ClipboardData(text: 'http://localhost:${ordersState.serverPort}/admin'));
+                              Clipboard.setData(ClipboardData(text: 'http://127.0.0.1:${ordersState.serverPort}/admin'));
                               ScaffoldMessenger.of(context).clearSnackBars();
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(

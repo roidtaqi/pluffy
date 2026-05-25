@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 import '../../../shared/providers/global_providers.dart';
 import '../../cart/domain/cart_item.dart';
 import '../domain/order.dart';
@@ -14,7 +16,7 @@ class OrdersState {
   const OrdersState({
     this.orders = const [],
     this.activeOrder,
-    this.autoSimulate = true,
+    this.autoSimulate = false,
     this.serverPort = 8080,
   });
 
@@ -108,7 +110,7 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
   }
 
   // Create a new order from active checkout details
-  String placeOrder({
+  Future<String> placeOrder({
     required List<CartItem> items,
     required double subtotal,
     required double discount,
@@ -118,8 +120,90 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
     required String outletName,
     required String paymentMethod,
     String? voucherCode,
-  }) {
+  }) async {
     final orderId = 'ORD-${1000 + state.orders.length + 1}-${DateTime.now().millisecond}';
+    
+    // Prepare items payload for Laravel Backend
+    final itemsPayload = items.map((item) {
+      return {
+        'product_id': int.parse(item.product.id),
+        'quantity': item.quantity,
+        'price': item.product.basePrice.toInt(),
+      };
+    }).toList();
+
+    final payload = {
+      'subtotal': subtotal.toInt(),
+      'discount': discount.toInt(),
+      'tax': tax.toInt(),
+      'service_fee': serviceFee.toInt(),
+      'total': total.toInt(),
+      'outlet_name': outletName,
+      'payment_method': paymentMethod,
+      'voucher_code': voucherCode,
+      'items': itemsPayload,
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse('http://127.0.0.1:8000/api/orders'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(payload),
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> body = jsonDecode(response.body);
+        if (body['success'] == true) {
+          final data = body['data'];
+          final serverOrderId = data['order_id'];
+          final userData = data['user'];
+
+          final newOrder = OrderModel(
+            id: serverOrderId,
+            orderDate: DateTime.now(),
+            items: items,
+            subtotal: subtotal,
+            discount: discount,
+            tax: tax,
+            serviceFee: serviceFee,
+            total: total,
+            status: OrderStatus.placed,
+            outletName: outletName,
+            paymentMethod: paymentMethod,
+            voucherCode: voucherCode,
+          );
+
+          // Update local orders list
+          state = state.copyWith(
+            orders: [newOrder, ...state.orders],
+            activeOrder: newOrder,
+          );
+
+          // Update user profile dynamically in global provider
+          final currentUser = _ref.read(userProfileProvider).value;
+          if (currentUser != null) {
+            final updatedUser = UserProfile(
+              id: currentUser.id,
+              name: currentUser.name,
+              email: currentUser.email,
+              loyaltyPoints: userData['loyalty_points'] ?? currentUser.loyaltyPoints,
+              loyaltyStamps: userData['loyalty_stamps'] ?? currentUser.loyaltyStamps,
+              membershipTier: userData['membership_tier'] ?? currentUser.membershipTier,
+            );
+            _ref.read(userProfileProvider.notifier).updateProfile(updatedUser);
+          }
+
+          // Trigger dynamic re-fetching of products list to update stocks live!
+          _ref.invalidate(productsProvider);
+
+          return serverOrderId;
+        }
+      }
+    } catch (e) {
+      print("Failed to post order to Laravel backend: $e");
+    }
+
+    // Fallback: local in-memory order placement if server fails
     final newOrder = OrderModel(
       id: orderId,
       orderDate: DateTime.now(),

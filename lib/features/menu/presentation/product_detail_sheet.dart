@@ -42,6 +42,7 @@ class _ProductDetailSheetState extends ConsumerState<ProductDetailSheet> {
   @override
   void initState() {
     super.initState();
+    _quantity = widget.product.stock == 0 ? 0 : 1;
     // Pre-select defaults if options are available
     if (widget.product.availableSweetness != null && widget.product.availableSweetness!.isNotEmpty) {
       _selectedSweetness = widget.product.availableSweetness!.contains('100%')
@@ -74,6 +75,13 @@ class _ProductDetailSheetState extends ConsumerState<ProductDetailSheet> {
         _selectedAddons.add(addon);
       }
     });
+  }
+
+  String _formatPrice(double price) {
+    if (price >= 1000) {
+      return 'Rp ${price.toStringAsFixed(0).replaceAllMapped(RegExp(r"(\d{1,3})(?=(\d{3})+(?!\d))"), (Match m) => "${m[1]}.")}';
+    }
+    return '\$${price.toStringAsFixed(2)}';
   }
 
   @override
@@ -162,9 +170,8 @@ class _ProductDetailSheetState extends ConsumerState<ProductDetailSheet> {
                         ],
                       ),
                     ),
-                    const SizedBox(width: 8),
                     Text(
-                      '\$${product.basePrice.toStringAsFixed(2)}',
+                      _formatPrice(product.basePrice),
                       style: AppTextStyles.priceLarge.copyWith(fontSize: 22),
                     ),
                   ],
@@ -179,6 +186,37 @@ class _ProductDetailSheetState extends ConsumerState<ProductDetailSheet> {
                     color: AppColors.textSecondary,
                     height: 1.4,
                   ),
+                ),
+                
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    Icon(
+                      product.stock == 0 ? Icons.error_outline : Icons.inventory_2_outlined,
+                      size: 16,
+                      color: product.stock == 0
+                          ? AppColors.primary
+                          : product.stock <= 5
+                              ? Colors.orange
+                              : AppColors.textSecondary,
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      product.stock == 0
+                          ? 'Sold Out - Habis Terjual'
+                          : product.stock <= 5
+                              ? 'Stok Terbatas: Sisa ${product.stock} pcs!'
+                              : 'Stok Tersedia: ${product.stock} pcs',
+                      style: AppTextStyles.bodySecondaryMedium.copyWith(
+                        color: product.stock == 0
+                            ? AppColors.primary
+                            : product.stock <= 5
+                                ? Colors.orange
+                                : AppColors.textSecondary,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
                 ),
                 
                 const Divider(height: 36),
@@ -364,7 +402,7 @@ class _ProductDetailSheetState extends ConsumerState<ProductDetailSheet> {
                                 ],
                               ),
                               Text(
-                                '+\$${addon.price.toStringAsFixed(2)}',
+                                '+${_formatPrice(addon.price)}',
                                 style: AppTextStyles.priceRegular.copyWith(
                                   color: isSelected ? AppColors.primary : AppColors.textSecondary,
                                 ),
@@ -411,7 +449,7 @@ class _ProductDetailSheetState extends ConsumerState<ProductDetailSheet> {
                   children: [
                     IconButton(
                       icon: const Icon(Icons.remove, size: 16, color: AppColors.textMain),
-                      onPressed: () {
+                      onPressed: product.stock == 0 ? null : () {
                         if (_quantity > 1) {
                           setState(() => _quantity--);
                         }
@@ -423,7 +461,7 @@ class _ProductDetailSheetState extends ConsumerState<ProductDetailSheet> {
                     ),
                     IconButton(
                       icon: const Icon(Icons.add, size: 16, color: AppColors.textMain),
-                      onPressed: () {
+                      onPressed: product.stock == 0 || _quantity >= product.stock ? null : () {
                         setState(() => _quantity++);
                       },
                     ),
@@ -436,41 +474,45 @@ class _ProductDetailSheetState extends ConsumerState<ProductDetailSheet> {
               // Add to Cart button
               Expanded(
                 child: CustomButton(
-                  text: 'Add to Cart — \$${totalPrice.toStringAsFixed(2)}',
-                  onPressed: () {
-                    ref.read(cartProvider.notifier).addItem(
-                      product: product,
-                      quantity: _quantity,
-                      selectedSweetness: _selectedSweetness,
-                      selectedIce: _selectedIce,
-                      selectedTemperature: _selectedTemperature,
-                      selectedAddons: _selectedAddons,
-                    );
-                    
-                    Navigator.pop(context);
+                  text: product.stock == 0
+                      ? 'Sold Out - Habis'
+                      : 'Add to Cart — ${_formatPrice(totalPrice)}',
+                  onPressed: product.stock == 0
+                      ? null
+                      : () {
+                          ref.read(cartProvider.notifier).addItem(
+                            product: product,
+                            quantity: _quantity,
+                            selectedSweetness: _selectedSweetness,
+                            selectedIce: _selectedIce,
+                            selectedTemperature: _selectedTemperature,
+                            selectedAddons: _selectedAddons,
+                          );
+                          
+                          Navigator.pop(context);
 
-                    // Confirmation banner
-                    ScaffoldMessenger.of(context).clearSnackBars();
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Row(
-                          children: [
-                            const Icon(Icons.shopping_bag, color: Colors.white),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Text('Added $_quantity x ${product.name} to Cart!'),
+                          // Confirmation banner
+                          ScaffoldMessenger.of(context).clearSnackBars();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Row(
+                                children: [
+                                  const Icon(Icons.shopping_bag, color: Colors.white),
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: Text('Added $_quantity x ${product.name} to Cart!'),
+                                  ),
+                                ],
+                              ),
+                              backgroundColor: AppColors.success,
+                              behavior: SnackBarBehavior.floating,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              duration: const Duration(seconds: 2),
                             ),
-                          ],
-                        ),
-                        backgroundColor: AppColors.success,
-                        behavior: SnackBarBehavior.floating,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        duration: const Duration(seconds: 2),
-                      ),
-                    );
-                  },
+                          );
+                        },
                 ),
               ),
             ],

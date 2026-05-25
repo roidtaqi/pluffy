@@ -1,0 +1,17 @@
+services:
+  db:
+    image: mysql:8.0
+    container_name: pluffy-mysql-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: pluffy_db
+      MYSQL_USER: pluffy_user
+      MYSQL_PASSWORD: pluffy_password
+    ports:
+      - '3306:3306'
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+volumes:
+  mysql_data:

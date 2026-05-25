@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'app/routing/app_router.dart';
 import 'app/theme/app_theme.dart';
 import 'shared/widgets/global_notification_overlay.dart';
+import 'features/orders/data/orders_repository.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -13,11 +14,14 @@ void main() {
   );
 }
 
-class PluffyApp extends StatelessWidget {
+class PluffyApp extends ConsumerWidget {
   const PluffyApp({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    // Eagerly initialize ordersProvider to start the local admin server immediately on boot
+    ref.watch(ordersProvider);
+
     return MaterialApp.router(
       title: 'Pluffy',
       debugShowCheckedModeBanner: false,

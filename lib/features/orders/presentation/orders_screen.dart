@@ -217,7 +217,7 @@ class _OrdersScreenState extends ConsumerState<OrdersScreen> with SingleTickerPr
                               style: AppTextStyles.bodySecondaryMedium,
                             ),
                             Text(
-                              '\$${activeOrder.total.toStringAsFixed(2)}',
+                              formatPrice(activeOrder.total),
                               style: AppTextStyles.h3.copyWith(color: AppColors.primary),
                             ),
                           ],
@@ -347,7 +347,7 @@ class _OrdersScreenState extends ConsumerState<OrdersScreen> with SingleTickerPr
                             ),
                             const SizedBox(height: 2),
                             Text(
-                              '\$${order.total.toStringAsFixed(2)}',
+                              formatPrice(order.total),
                               style: AppTextStyles.priceLarge.copyWith(fontSize: 15),
                             ),
                           ],

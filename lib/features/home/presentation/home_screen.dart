@@ -24,7 +24,9 @@ class HomeScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final activeOutlet = ref.watch(activeOutletProvider);
-    final popularProducts = MockData.products.where((p) => p.isPopular).toList();
+    final productsAsync = ref.watch(productsProvider);
+    final products = productsAsync.value ?? MockData.products;
+    final popularProducts = products.where((p) => p.isPopular).toList();
 
     return Scaffold(
       appBar: AppBar(
@@ -212,7 +214,7 @@ class HomeScreen extends ConsumerWidget {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  '\$${product.basePrice.toStringAsFixed(2)}',
+                                  formatPrice(product.basePrice),
                                   style: AppTextStyles.priceRegular,
                                 ),
                                 Container(

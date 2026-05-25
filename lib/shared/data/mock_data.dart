@@ -8,9 +8,9 @@ class MockData {
   // Outlets
   static const List<Outlet> outlets = [
     Outlet(
-      id: 'out_shibuya',
-      name: 'Pluffy - Shibuya Main',
-      address: '1-23-10 Jinnan, Shibuya-ku, Tokyo (Near Crossing)',
+      id: 'out_juanda',
+      name: 'Pluffy - Juanda Street',
+      address: 'Jalan Abdul Muis No. 23, Jakarta (Juanda Plaza)',
       phone: '+81 3-1234-5678',
       operatingHours: '08:00 AM - 10:00 PM',
       distanceKm: 0.4,

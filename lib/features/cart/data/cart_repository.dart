@@ -30,7 +30,7 @@ class CartState {
 
   double get taxAmount => (subtotal - discountAmount) * 0.10; // Mock 10% Service Tax
 
-  double get serviceFee => subtotal > 0 ? 1.50 : 0.0; // Flat packaging / transaction fee
+  double get serviceFee => subtotal >= 1000 ? 2000.0 : (subtotal > 0 ? 1.50 : 0.0); // Flat packaging / transaction fee
 
   double get total => (subtotal - discountAmount + taxAmount + serviceFee).clamp(0.0, double.infinity);
 

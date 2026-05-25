@@ -32,6 +32,7 @@ class Product {
   final List<String>? availableIce;       // e.g., ['None', 'Less', 'Normal']
   final List<String>? availableTemperature; // e.g., ['Hot', 'Iced']
   final List<CustomizationAddon> availableAddons;
+  final int stock;
 
   const Product({
     required this.id,
@@ -46,5 +47,6 @@ class Product {
     this.availableIce,
     this.availableTemperature,
     this.availableAddons = const [],
+    this.stock = 10,
   });
 }

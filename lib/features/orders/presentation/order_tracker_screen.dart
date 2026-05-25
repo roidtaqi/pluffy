@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../app/theme/app_text_styles.dart';
 import '../../../shared/widgets/custom_button.dart';
+import '../../../shared/providers/global_providers.dart';
 import '../data/orders_repository.dart';
 
 class OrderTrackerScreen extends ConsumerWidget {
@@ -302,7 +303,7 @@ class OrderTrackerScreen extends ConsumerWidget {
                             style: AppTextStyles.bodyMedium,
                           ),
                           Text(
-                            '\$${item.totalPrice.toStringAsFixed(2)}',
+                            formatPrice(item.totalPrice),
                             style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold),
                           ),
                         ],
