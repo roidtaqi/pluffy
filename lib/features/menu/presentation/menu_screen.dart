@@ -4,7 +4,6 @@ import '../../../app/theme/app_colors.dart';
 import '../../../app/theme/app_text_styles.dart';
 import '../../../shared/data/mock_data.dart';
 import '../../../shared/widgets/custom_text_field.dart';
-import '../../menu/domain/category.dart';
 import '../../menu/domain/product.dart';
 import 'product_detail_sheet.dart';
 import '../../../shared/providers/global_providers.dart';

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../features/home/presentation/home_screen.dart';
+import '../../features/auth/presentation/auth_screen.dart';
 import '../../features/menu/presentation/menu_screen.dart';
 import '../../features/cart/presentation/cart_screen.dart';
 import '../../features/orders/presentation/orders_screen.dart';
@@ -10,16 +11,25 @@ import '../../features/orders/presentation/order_tracker_screen.dart';
 import '../../shared/widgets/splash_screen.dart';
 import 'navigation_shell.dart';
 
-final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
-final GlobalKey<NavigatorState> _shellNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'shell');
+final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>(
+  debugLabel: 'root',
+);
+final GlobalKey<NavigatorState> _shellNavigatorKey = GlobalKey<NavigatorState>(
+  debugLabel: 'shell',
+);
 
 final goRouter = GoRouter(
   initialLocation: '/',
   navigatorKey: _rootNavigatorKey,
   routes: [
+    GoRoute(path: '/', builder: (context, state) => const SplashScreen()),
     GoRoute(
-      path: '/',
-      builder: (context, state) => const SplashScreen(),
+      path: '/auth',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) {
+        final redirectPath = state.uri.queryParameters['redirect'] ?? '/home';
+        return AuthScreen(redirectPath: redirectPath);
+      },
     ),
     ShellRoute(
       navigatorKey: _shellNavigatorKey,
@@ -29,23 +39,28 @@ final goRouter = GoRouter(
       routes: [
         GoRoute(
           path: '/home',
-          pageBuilder: (context, state) => const NoTransitionPage(child: HomeScreen()),
+          pageBuilder: (context, state) =>
+              const NoTransitionPage(child: HomeScreen()),
         ),
         GoRoute(
           path: '/menu',
-          pageBuilder: (context, state) => const NoTransitionPage(child: MenuScreen()),
+          pageBuilder: (context, state) =>
+              const NoTransitionPage(child: MenuScreen()),
         ),
         GoRoute(
           path: '/cart',
-          pageBuilder: (context, state) => const NoTransitionPage(child: CartScreen()),
+          pageBuilder: (context, state) =>
+              const NoTransitionPage(child: CartScreen()),
         ),
         GoRoute(
           path: '/orders',
-          pageBuilder: (context, state) => const NoTransitionPage(child: OrdersScreen()),
+          pageBuilder: (context, state) =>
+              const NoTransitionPage(child: OrdersScreen()),
         ),
         GoRoute(
           path: '/profile',
-          pageBuilder: (context, state) => const NoTransitionPage(child: ProfileScreen()),
+          pageBuilder: (context, state) =>
+              const NoTransitionPage(child: ProfileScreen()),
         ),
       ],
     ),

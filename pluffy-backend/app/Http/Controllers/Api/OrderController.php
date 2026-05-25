@@ -26,20 +26,20 @@ class OrderController extends Controller
                 'id' => $order->id,
                 'orderDate' => $order->created_at->toIso8601String(),
                 'outletName' => $order->outlet_name,
-                'total' => (double) $order->total,
+                'total' => (float) $order->total,
                 'status' => $order->status,
                 'items' => $order->items->map(function ($item) {
                     return [
                         'productName' => $item->product ? $item->product->name : 'Unknown Product',
                         'quantity' => (int) $item->quantity,
-                        'price' => (double) $item->unit_price,
+                        'price' => (float) $item->unit_price,
                     ];
-                })->toArray()
+                })->toArray(),
             ];
         });
 
         return response()->json([
-            'orders' => $mappedOrders
+            'orders' => $mappedOrders,
         ]);
     }
 
@@ -57,6 +57,7 @@ class OrderController extends Controller
             'outlet_name' => 'required|string',
             'payment_method' => 'required|string',
             'voucher_code' => 'nullable|string',
+            'user_id' => 'required|integer|exists:users,id',
             'items' => 'required|array|min:1',
             'items.*.product_id' => 'required|integer',
             'items.*.quantity' => 'required|integer|min:1',
@@ -67,11 +68,11 @@ class OrderController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Validation error',
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
             ], 400);
         }
 
-        $userId = $request->input('user_id', 1); // Defaults to seeded user 1
+        $userId = $request->input('user_id');
 
         try {
             $order = DB::transaction(function () use ($request, $userId) {
@@ -143,7 +144,7 @@ class OrderController extends Controller
                     } else {
                         $user->membership_tier = 'Bronze Member';
                     }
-                    
+
                     $user->save();
                 }
 
@@ -158,20 +159,20 @@ class OrderController extends Controller
                 'message' => 'Order placed successfully',
                 'data' => [
                     'order_id' => $order->id,
-                    'total' => (double) $order->total,
+                    'total' => (float) $order->total,
                     'status' => $order->status,
                     'user' => [
                         'loyalty_points' => $updatedUser->loyalty_points,
                         'loyalty_stamps' => $updatedUser->loyalty_stamps,
                         'membership_tier' => $updatedUser->membership_tier,
-                    ]
-                ]
+                    ],
+                ],
             ]);
 
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to place order: ' . $e->getMessage()
+                'message' => 'Failed to place order: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -190,7 +191,7 @@ class OrderController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Validation error',
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
             ], 400);
         }
 
@@ -198,10 +199,10 @@ class OrderController extends Controller
         $status = $request->input('status');
 
         $order = Order::find($orderId);
-        if (!$order) {
+        if (! $order) {
             return response()->json([
                 'success' => false,
-                'message' => 'Order not found'
+                'message' => 'Order not found',
             ], 404);
         }
 
@@ -210,7 +211,7 @@ class OrderController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Order status updated successfully'
+            'message' => 'Order status updated successfully',
         ]);
     }
 }

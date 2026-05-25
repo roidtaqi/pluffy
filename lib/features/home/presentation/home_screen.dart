@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -5,35 +7,68 @@ import '../../../app/theme/app_colors.dart';
 import '../../../app/theme/app_text_styles.dart';
 import '../../../shared/data/mock_data.dart';
 import '../../../shared/providers/global_providers.dart';
-import '../../menu/domain/product.dart';
 import '../../menu/presentation/product_detail_sheet.dart';
 import '../../outlet/presentation/outlet_selector_sheet.dart';
 import 'widgets/loyalty_card.dart';
 import 'widgets/promo_carousel.dart';
 
-class HomeScreen extends ConsumerWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
-  String _getGreeting() {
-    final hour = DateTime.now().hour;
-    if (hour < 12) return 'Good Morning,';
-    if (hour < 17) return 'Good Afternoon,';
-    return 'Good Evening,';
+  @override
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends ConsumerState<HomeScreen> {
+  late DateTime _currentWitaTime;
+  Timer? _clockTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentWitaTime = _witaNow();
+    _clockTimer = Timer.periodic(const Duration(minutes: 1), (_) {
+      if (mounted) {
+        setState(() {
+          _currentWitaTime = _witaNow();
+        });
+      }
+    });
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  void dispose() {
+    _clockTimer?.cancel();
+    super.dispose();
+  }
+
+  DateTime _witaNow() {
+    return DateTime.now().toUtc().add(const Duration(hours: 8));
+  }
+
+  String _getGreeting(DateTime time) {
+    final hour = time.hour;
+    if (hour >= 4 && hour < 11) return 'Selamat Pagi';
+    if (hour >= 11 && hour < 15) return 'Selamat Siang';
+    if (hour >= 15 && hour < 18) return 'Selamat Sore';
+    return 'Selamat Malam';
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final activeOutlet = ref.watch(activeOutletProvider);
     final productsAsync = ref.watch(productsProvider);
     final products = productsAsync.value ?? MockData.products;
     final popularProducts = products.where((p) => p.isPopular).toList();
+    final user = ref.watch(userProfileProvider).valueOrNull;
+    final firstName = user?.name.split(' ').first ?? 'Guest';
 
     return Scaffold(
       appBar: AppBar(
         title: Column(
           children: [
             Text(
-              _getGreeting(),
+              _getGreeting(_currentWitaTime),
               style: AppTextStyles.bodySecondaryMedium.copyWith(fontSize: 12),
             ),
             const SizedBox(height: 2),
@@ -83,7 +118,7 @@ class HomeScreen extends ConsumerWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Hi, ${MockData.userName.split(' ').first}',
+                        'Hi, $firstName',
                         style: AppTextStyles.brandHeader.copyWith(
                           fontSize: 28,
                           color: AppColors.textMain,
@@ -112,14 +147,14 @@ class HomeScreen extends ConsumerWidget {
                   ),
                 ],
               ),
-              
+
               const SizedBox(height: 24),
-              
+
               // Loyalty Card
               const LoyaltyCard(),
-              
+
               const SizedBox(height: 28),
-              
+
               // Promos
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -135,9 +170,9 @@ class HomeScreen extends ConsumerWidget {
               ),
               const SizedBox(height: 8),
               const PromoCarousel(),
-              
+
               const SizedBox(height: 28),
-              
+
               // Popular Items Horizontal list
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -152,14 +187,15 @@ class HomeScreen extends ConsumerWidget {
                 ],
               ),
               const SizedBox(height: 12),
-              
+
               SizedBox(
                 height: 190,
                 child: ListView.separated(
                   scrollDirection: Axis.horizontal,
                   physics: const BouncingScrollPhysics(),
                   itemCount: popularProducts.length,
-                  separatorBuilder: (context, index) => const SizedBox(width: 14),
+                  separatorBuilder: (context, index) =>
+                      const SizedBox(width: 14),
                   itemBuilder: (context, index) {
                     final product = popularProducts[index];
                     return GestureDetector(
@@ -170,7 +206,10 @@ class HomeScreen extends ConsumerWidget {
                         decoration: BoxDecoration(
                           color: AppColors.cardBg.withOpacity(0.5),
                           borderRadius: BorderRadius.circular(20),
-                          border: Border.all(color: AppColors.border, width: 1.0),
+                          border: Border.all(
+                            color: AppColors.border,
+                            width: 1.0,
+                          ),
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -182,7 +221,10 @@ class HomeScreen extends ConsumerWidget {
                                 decoration: BoxDecoration(
                                   color: AppColors.cardBg,
                                   borderRadius: BorderRadius.circular(14),
-                                  border: Border.all(color: AppColors.border.withOpacity(0.5), width: 1),
+                                  border: Border.all(
+                                    color: AppColors.border.withOpacity(0.5),
+                                    width: 1,
+                                  ),
                                 ),
                                 child: const Center(
                                   child: Icon(
@@ -194,7 +236,7 @@ class HomeScreen extends ConsumerWidget {
                               ),
                             ),
                             const SizedBox(height: 8),
-                            
+
                             // Title & Price
                             Text(
                               product.name,
@@ -205,7 +247,9 @@ class HomeScreen extends ConsumerWidget {
                             const SizedBox(height: 2),
                             Text(
                               product.description,
-                              style: AppTextStyles.bodySecondary.copyWith(fontSize: 10),
+                              style: AppTextStyles.bodySecondary.copyWith(
+                                fontSize: 10,
+                              ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),

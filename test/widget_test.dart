@@ -13,7 +13,7 @@ void main() {
 
     // Verify that the splash screen branding elements are visible
     expect(find.text('PLUFFY'), findsOneWidget);
-    expect(find.text('Premium Japanese Dessert Café'), findsOneWidget);
+    expect(find.text('Premium Pastry - Pâtissier'), findsOneWidget);
     expect(find.text('Warm Premium Experience'), findsOneWidget);
 
     // Drain the splash screen navigation timer so no timers are left pending

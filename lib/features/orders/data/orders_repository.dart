@@ -87,19 +87,13 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
   // Start the internal Web Admin local server
   Future<void> _startWebServer() async {
     try {
-      _webServer = AdminWebServer(
-        notifier: this,
-        port: 8080,
-      );
+      _webServer = AdminWebServer(notifier: this, port: 8080);
       await _webServer!.start();
       state = state.copyWith(serverPort: _webServer!.port);
     } catch (e) {
       // In case 8080 is taken, try a different port (e.g. 8081)
       try {
-        _webServer = AdminWebServer(
-          notifier: this,
-          port: 8081,
-        );
+        _webServer = AdminWebServer(notifier: this, port: 8081);
         await _webServer!.start();
         state = state.copyWith(serverPort: _webServer!.port);
       } catch (e) {
@@ -119,32 +113,36 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
     required double total,
     required String outletName,
     required String paymentMethod,
+    required int userId,
     String? voucherCode,
   }) async {
-    final orderId = 'ORD-${1000 + state.orders.length + 1}-${DateTime.now().millisecond}';
-    
-    // Prepare items payload for Laravel Backend
-    final itemsPayload = items.map((item) {
-      return {
-        'product_id': int.parse(item.product.id),
-        'quantity': item.quantity,
-        'price': item.product.basePrice.toInt(),
-      };
-    }).toList();
-
-    final payload = {
-      'subtotal': subtotal.toInt(),
-      'discount': discount.toInt(),
-      'tax': tax.toInt(),
-      'service_fee': serviceFee.toInt(),
-      'total': total.toInt(),
-      'outlet_name': outletName,
-      'payment_method': paymentMethod,
-      'voucher_code': voucherCode,
-      'items': itemsPayload,
-    };
+    final orderId =
+        'ORD-${1000 + state.orders.length + 1}-${DateTime.now().millisecond}';
 
     try {
+      // Backend products use numeric IDs. Mock fallback products use string IDs,
+      // so parsing belongs inside this guarded backend path.
+      final itemsPayload = items.map((item) {
+        return {
+          'product_id': int.parse(item.product.id),
+          'quantity': item.quantity,
+          'price': item.product.basePrice.toInt(),
+        };
+      }).toList();
+
+      final payload = {
+        'subtotal': subtotal.toInt(),
+        'discount': discount.toInt(),
+        'tax': tax.toInt(),
+        'service_fee': serviceFee.toInt(),
+        'total': total.toInt(),
+        'outlet_name': outletName,
+        'payment_method': paymentMethod,
+        'voucher_code': voucherCode,
+        'user_id': userId,
+        'items': itemsPayload,
+      };
+
       final response = await http.post(
         Uri.parse('http://127.0.0.1:8000/api/orders'),
         headers: {'Content-Type': 'application/json'},
@@ -180,15 +178,18 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
           );
 
           // Update user profile dynamically in global provider
-          final currentUser = _ref.read(userProfileProvider).value;
+          final currentUser = _ref.read(userProfileProvider).valueOrNull;
           if (currentUser != null) {
             final updatedUser = UserProfile(
               id: currentUser.id,
               name: currentUser.name,
               email: currentUser.email,
-              loyaltyPoints: userData['loyalty_points'] ?? currentUser.loyaltyPoints,
-              loyaltyStamps: userData['loyalty_stamps'] ?? currentUser.loyaltyStamps,
-              membershipTier: userData['membership_tier'] ?? currentUser.membershipTier,
+              loyaltyPoints:
+                  userData['loyalty_points'] ?? currentUser.loyaltyPoints,
+              loyaltyStamps:
+                  userData['loyalty_stamps'] ?? currentUser.loyaltyStamps,
+              membershipTier:
+                  userData['membership_tier'] ?? currentUser.membershipTier,
             );
             _ref.read(userProfileProvider.notifier).updateProfile(updatedUser);
           }
@@ -268,10 +269,7 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
       }
     }
 
-    state = state.copyWith(
-      orders: updatedOrders,
-      activeOrder: activeOrder,
-    );
+    state = state.copyWith(orders: updatedOrders, activeOrder: activeOrder);
 
     // Trigger local notification so customer receives it
     _triggerNotificationForStatus(orderId, newStatus);
@@ -289,15 +287,18 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
         break;
       case OrderStatus.preparing:
         title = "In the Kitchen! 🍳";
-        message = "Pluffy koki sedang memanggang soufflé lezat Anda dengan cinta!";
+        message =
+            "Pluffy koki sedang memanggang soufflé lezat Anda dengan cinta!";
         break;
       case OrderStatus.ready:
         title = "Hidangan Siap Diambil! 🥞🎉";
-        message = "Silakan menuju konter Shibuya. Tunjukkan ID pesanan: $orderId!";
+        message =
+            "Silakan menuju konter Shibuya. Tunjukkan ID pesanan: $orderId!";
         break;
       case OrderStatus.completed:
         title = "Pesanan Selesai! ❤️";
-        message = "Terima kasih telah berkunjung ke Pluffy! Selamat menikmati hidangan hangat Anda.";
+        message =
+            "Terima kasih telah berkunjung ke Pluffy! Selamat menikmati hidangan hangat Anda.";
         break;
     }
 
@@ -313,7 +314,7 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
   void _startStatusSimulation() {
     _statusTimer?.cancel();
     int currentStep = 0;
-    
+
     if (state.activeOrder != null) {
       currentStep = state.activeOrder!.status.index;
     }
@@ -326,7 +327,7 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
 
       currentStep++;
       OrderStatus nextStatus;
-      
+
       if (currentStep == 1) {
         nextStatus = OrderStatus.preparing;
       } else if (currentStep == 2) {
@@ -349,6 +350,8 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
 }
 
 // Global Provider for Orders
-final ordersProvider = StateNotifierProvider<OrdersNotifier, OrdersState>((ref) {
+final ordersProvider = StateNotifierProvider<OrdersNotifier, OrdersState>((
+  ref,
+) {
   return OrdersNotifier(ref);
 });

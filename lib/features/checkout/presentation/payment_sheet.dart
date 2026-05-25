@@ -57,7 +57,14 @@ class _PaymentSheetState extends ConsumerState<PaymentSheet> {
   Future<void> _processPayment() async {
     final cart = ref.read(cartProvider);
     final activeOutlet = ref.read(activeOutletProvider);
-    
+    final user = ref.read(userProfileProvider).valueOrNull;
+
+    if (user == null) {
+      Navigator.pop(context);
+      context.go('/auth?redirect=/cart');
+      return;
+    }
+
     setState(() {
       _isPaying = true;
     });
@@ -67,10 +74,14 @@ class _PaymentSheetState extends ConsumerState<PaymentSheet> {
 
     if (!mounted) return;
 
-    final selectedMethod = _paymentMethods.firstWhere((m) => m['id'] == _selectedMethodId);
-    
+    final selectedMethod = _paymentMethods.firstWhere(
+      (m) => m['id'] == _selectedMethodId,
+    );
+
     // 1. Write order to global orders database
-    final orderId = await ref.read(ordersProvider.notifier).placeOrder(
+    final orderId = await ref
+        .read(ordersProvider.notifier)
+        .placeOrder(
           items: cart.items,
           subtotal: cart.subtotal,
           discount: cart.discountAmount,
@@ -80,6 +91,7 @@ class _PaymentSheetState extends ConsumerState<PaymentSheet> {
           outletName: activeOutlet.name,
           paymentMethod: selectedMethod['title'],
           voucherCode: cart.appliedVoucherCode,
+          userId: user.id,
         );
 
     // 2. Clear active checkout cart
@@ -115,7 +127,7 @@ class _PaymentSheetState extends ConsumerState<PaymentSheet> {
             ),
           ),
           const SizedBox(height: 20),
-          
+
           Text(
             'Payment Method',
             style: AppTextStyles.h1.copyWith(color: AppColors.primary),
@@ -125,9 +137,9 @@ class _PaymentSheetState extends ConsumerState<PaymentSheet> {
             'Confirm payment method to place order',
             style: AppTextStyles.bodySecondary,
           ),
-          
+
           const SizedBox(height: 24),
-          
+
           // Payment List
           Expanded(
             child: ListView.separated(
@@ -152,7 +164,9 @@ class _PaymentSheetState extends ConsumerState<PaymentSheet> {
                       color: isSelected ? AppColors.cardBg : AppColors.white,
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(
-                        color: isSelected ? AppColors.primary : AppColors.border,
+                        color: isSelected
+                            ? AppColors.primary
+                            : AppColors.border,
                         width: isSelected ? 1.8 : 1.0,
                       ),
                     ),
@@ -168,7 +182,9 @@ class _PaymentSheetState extends ConsumerState<PaymentSheet> {
                           ),
                           child: Icon(
                             method['icon'] as IconData,
-                            color: isSelected ? AppColors.primary : AppColors.textSecondary,
+                            color: isSelected
+                                ? AppColors.primary
+                                : AppColors.textSecondary,
                             size: 24,
                           ),
                         ),
@@ -180,13 +196,17 @@ class _PaymentSheetState extends ConsumerState<PaymentSheet> {
                               Text(
                                 method['title'] as String,
                                 style: AppTextStyles.h3.copyWith(
-                                  color: isSelected ? AppColors.primary : AppColors.textMain,
+                                  color: isSelected
+                                      ? AppColors.primary
+                                      : AppColors.textMain,
                                 ),
                               ),
                               const SizedBox(height: 2),
                               Text(
                                 method['subtitle'] as String,
-                                style: AppTextStyles.bodySecondary.copyWith(fontSize: 12),
+                                style: AppTextStyles.bodySecondary.copyWith(
+                                  fontSize: 12,
+                                ),
                               ),
                             ],
                           ),
@@ -204,7 +224,7 @@ class _PaymentSheetState extends ConsumerState<PaymentSheet> {
               },
             ),
           ),
-          
+
           // Action Bottom Panel
           Container(
             padding: const EdgeInsets.only(top: 16.0),
@@ -222,7 +242,9 @@ class _PaymentSheetState extends ConsumerState<PaymentSheet> {
                 ),
                 const SizedBox(height: 16),
                 CustomButton(
-                  text: _isPaying ? 'Authorizing...' : 'Pay Now — ${formatPrice(cart.total)}',
+                  text: _isPaying
+                      ? 'Authorizing...'
+                      : 'Pay Now — ${formatPrice(cart.total)}',
                   isLoading: _isPaying,
                   onPressed: _isPaying ? null : _processPayment,
                 ),

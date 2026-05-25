@@ -8,7 +8,11 @@ import '../../../../shared/providers/global_providers.dart';
 class LoyaltyCard extends ConsumerWidget {
   const LoyaltyCard({Key? key}) : super(key: key);
 
-  void _showMockQrCode(BuildContext context) {
+  void _showMockQrCode(BuildContext context, UserProfile? user, int points) {
+    final displayName = user?.name ?? 'Guest';
+    final membershipTier = user?.membershipTier ?? 'Bronze Member';
+    final tierCode = membershipTier.split(' ').first.toUpperCase();
+
     showDialog(
       context: context,
       builder: (context) {
@@ -43,7 +47,7 @@ class LoyaltyCard extends ConsumerWidget {
                   style: AppTextStyles.bodySecondary,
                 ),
                 const SizedBox(height: 28),
-                
+
                 // Gorgeous custom pulsing mock barcode/QR
                 TweenAnimationBuilder<double>(
                   tween: Tween<double>(begin: 0.98, end: 1.02),
@@ -58,7 +62,10 @@ class LoyaltyCard extends ConsumerWidget {
                         decoration: BoxDecoration(
                           color: AppColors.white,
                           borderRadius: BorderRadius.circular(20),
-                          border: Border.all(color: AppColors.border, width: 1.5),
+                          border: Border.all(
+                            color: AppColors.border,
+                            width: 1.5,
+                          ),
                         ),
                         child: Column(
                           children: [
@@ -67,13 +74,11 @@ class LoyaltyCard extends ConsumerWidget {
                               width: 180,
                               height: 180,
                               color: AppColors.white,
-                              child: CustomPaint(
-                                painter: QrPainter(),
-                              ),
+                              child: CustomPaint(painter: QrPainter()),
                             ),
                             const SizedBox(height: 12),
                             Text(
-                              'PLUFFY-640-GOLD',
+                              'PLUFFY-$points-$tierCode',
                               style: AppTextStyles.bodyMedium.copyWith(
                                 letterSpacing: 3.0,
                                 fontSize: 12,
@@ -87,13 +92,12 @@ class LoyaltyCard extends ConsumerWidget {
                   },
                 ),
                 const SizedBox(height: 28),
+                Text(displayName, style: AppTextStyles.h3),
                 Text(
-                  'Chloe Henderson',
-                  style: AppTextStyles.h3,
-                ),
-                Text(
-                  'Pluffy Gold Tier member',
-                  style: AppTextStyles.bodySecondaryMedium.copyWith(color: AppColors.primary),
+                  'Pluffy $membershipTier',
+                  style: AppTextStyles.bodySecondaryMedium.copyWith(
+                    color: AppColors.primary,
+                  ),
                 ),
                 const SizedBox(height: 24),
                 SizedBox(
@@ -122,6 +126,8 @@ class LoyaltyCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final stamps = ref.watch(loyaltyStampsProvider);
     final points = ref.watch(loyaltyPointsProvider);
+    final user = ref.watch(userProfileProvider).valueOrNull;
+    final membershipTier = user?.membershipTier ?? 'Bronze Member';
 
     return Container(
       width: double.infinity,
@@ -134,7 +140,7 @@ class LoyaltyCard extends ConsumerWidget {
             color: AppColors.textMain.withOpacity(0.04),
             blurRadius: 10,
             offset: const Offset(0, 4),
-          )
+          ),
         ],
       ),
       child: Stack(
@@ -149,7 +155,7 @@ class LoyaltyCard extends ConsumerWidget {
               color: AppColors.border.withOpacity(0.2),
             ),
           ),
-          
+
           Padding(
             padding: const EdgeInsets.all(20.0),
             child: Column(
@@ -164,51 +170,60 @@ class LoyaltyCard extends ConsumerWidget {
                       children: [
                         Text(
                           'Pluffy Loyalty Card',
-                          style: AppTextStyles.h3.copyWith(color: AppColors.textSecondary),
+                          style: AppTextStyles.h3.copyWith(
+                            color: AppColors.textSecondary,
+                          ),
                         ),
                         Text(
-                          'Gold Tier Member',
-                          style: AppTextStyles.h2.copyWith(color: AppColors.primary),
+                          membershipTier,
+                          style: AppTextStyles.h2.copyWith(
+                            color: AppColors.primary,
+                          ),
                         ),
                       ],
                     ),
                     IconButton(
-                      onPressed: () => _showMockQrCode(context),
-                      icon: const Icon(Icons.qr_code_2, size: 36, color: AppColors.primary),
+                      onPressed: () => _showMockQrCode(context, user, points),
+                      icon: const Icon(
+                        Icons.qr_code_2,
+                        size: 36,
+                        color: AppColors.primary,
+                      ),
                       padding: EdgeInsets.zero,
                       constraints: const BoxConstraints(),
                     ),
                   ],
                 ),
-                
+
                 const SizedBox(height: 16),
-                
+
                 // Points view
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.baseline,
                   textBaseline: TextBaseline.alphabetic,
                   children: [
-                    Text(
-                      '$points',
-                      style: AppTextStyles.loyaltyPointsText,
-                    ),
+                    Text('$points', style: AppTextStyles.loyaltyPointsText),
                     const SizedBox(width: 4),
                     Text(
                       'points',
-                      style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSecondary),
+                      style: AppTextStyles.bodyMedium.copyWith(
+                        color: AppColors.textSecondary,
+                      ),
                     ),
                   ],
                 ),
-                
+
                 const SizedBox(height: 16),
-                
+
                 // Stamp tracker header
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
                       'Stamp Rewards',
-                      style: AppTextStyles.bodySecondaryMedium.copyWith(fontWeight: FontWeight.bold),
+                      style: AppTextStyles.bodySecondaryMedium.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     Text(
                       '$stamps / ${MockData.stampsGoal}',
@@ -220,7 +235,7 @@ class LoyaltyCard extends ConsumerWidget {
                   ],
                 ),
                 const SizedBox(height: 8),
-                
+
                 // Stamps grid (10 steps)
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -230,10 +245,14 @@ class LoyaltyCard extends ConsumerWidget {
                       width: 28,
                       height: 28,
                       decoration: BoxDecoration(
-                        color: isStamped ? AppColors.primary : AppColors.background,
+                        color: isStamped
+                            ? AppColors.primary
+                            : AppColors.background,
                         shape: BoxShape.circle,
                         border: Border.all(
-                          color: isStamped ? AppColors.primary : AppColors.border,
+                          color: isStamped
+                              ? AppColors.primary
+                              : AppColors.border,
                           width: 1.5,
                         ),
                       ),
@@ -247,9 +266,9 @@ class LoyaltyCard extends ConsumerWidget {
                     );
                   }),
                 ),
-                
+
                 const SizedBox(height: 14),
-                
+
                 // Next reward subtitle
                 Text(
                   stamps >= MockData.stampsGoal
@@ -257,8 +276,12 @@ class LoyaltyCard extends ConsumerWidget {
                       : 'Earn ${MockData.stampsGoal - stamps} more stamps for a free Japanese Soufflé!',
                   style: AppTextStyles.bodySecondary.copyWith(
                     fontSize: 12,
-                    color: stamps >= MockData.stampsGoal ? AppColors.success : AppColors.textSecondary,
-                    fontWeight: stamps >= MockData.stampsGoal ? FontWeight.bold : FontWeight.normal,
+                    color: stamps >= MockData.stampsGoal
+                        ? AppColors.success
+                        : AppColors.textSecondary,
+                    fontWeight: stamps >= MockData.stampsGoal
+                        ? FontWeight.bold
+                        : FontWeight.normal,
                   ),
                 ),
               ],
@@ -283,7 +306,12 @@ class QrPainter extends CustomPainter {
     // Helper to draw a square block
     void drawBlock(int x, int y, {int sizeMultiplier = 1}) {
       canvas.drawRect(
-        Rect.fromLTWH(x * squareSize, y * squareSize, squareSize * sizeMultiplier, squareSize * sizeMultiplier),
+        Rect.fromLTWH(
+          x * squareSize,
+          y * squareSize,
+          squareSize * sizeMultiplier,
+          squareSize * sizeMultiplier,
+        ),
         paint,
       );
     }
@@ -293,17 +321,32 @@ class QrPainter extends CustomPainter {
       // Outer 7x7 box
       paint.color = AppColors.textMain;
       canvas.drawRect(
-        Rect.fromLTWH(startX * squareSize, startY * squareSize, 7 * squareSize, 7 * squareSize),
+        Rect.fromLTWH(
+          startX * squareSize,
+          startY * squareSize,
+          7 * squareSize,
+          7 * squareSize,
+        ),
         paint,
       );
       paint.color = AppColors.white;
       canvas.drawRect(
-        Rect.fromLTWH((startX + 1) * squareSize, (startY + 1) * squareSize, 5 * squareSize, 5 * squareSize),
+        Rect.fromLTWH(
+          (startX + 1) * squareSize,
+          (startY + 1) * squareSize,
+          5 * squareSize,
+          5 * squareSize,
+        ),
         paint,
       );
       paint.color = AppColors.textMain;
       canvas.drawRect(
-        Rect.fromLTWH((startX + 2) * squareSize, (startY + 2) * squareSize, 3 * squareSize, 3 * squareSize),
+        Rect.fromLTWH(
+          (startX + 2) * squareSize,
+          (startY + 2) * squareSize,
+          3 * squareSize,
+          3 * squareSize,
+        ),
         paint,
       );
     }
@@ -319,29 +362,29 @@ class QrPainter extends CustomPainter {
     drawBlock(2, 4);
     drawBlock(3, 4);
     drawBlock(4, 4);
-    
+
     drawBlock(4, 0);
     drawBlock(4, 2);
-    
+
     drawBlock(7, 7);
     drawBlock(8, 7);
     drawBlock(9, 7);
     drawBlock(10, 7);
-    
+
     drawBlock(7, 8);
     drawBlock(9, 8);
     drawBlock(11, 8);
-    
+
     drawBlock(8, 9);
     drawBlock(10, 9);
-    
+
     drawBlock(7, 10);
     drawBlock(8, 10);
     drawBlock(11, 10);
-    
+
     drawBlock(9, 11);
     drawBlock(10, 11);
-    
+
     drawBlock(4, 6);
     drawBlock(6, 4);
   }

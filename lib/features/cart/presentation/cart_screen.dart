@@ -30,7 +30,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
     setState(() {
       _voucherError = '';
     });
-    
+
     final code = _voucherController.text;
     if (code.isEmpty) return;
 
@@ -49,7 +49,9 @@ class _CartScreenState extends ConsumerState<CartScreen> {
           ),
           backgroundColor: AppColors.success,
           behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
         ),
       );
     } else {
@@ -99,10 +101,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                       ),
                     ),
                     const SizedBox(height: 24),
-                    Text(
-                      'Your cart is empty',
-                      style: AppTextStyles.h2,
-                    ),
+                    Text('Your cart is empty', style: AppTextStyles.h2),
                     const SizedBox(height: 8),
                     Text(
                       'Browse our premium soufflés and customize them to your exact liking!',
@@ -125,7 +124,10 @@ class _CartScreenState extends ConsumerState<CartScreen> {
               children: [
                 // Top outlet pickup indicator
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 12,
+                  ),
                   decoration: BoxDecoration(
                     color: AppColors.cardBg.withOpacity(0.4),
                     border: const Border(
@@ -134,11 +136,17 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                   ),
                   child: Row(
                     children: [
-                      const Icon(Icons.storefront, size: 16, color: AppColors.primary),
+                      const Icon(
+                        Icons.storefront,
+                        size: 16,
+                        color: AppColors.primary,
+                      ),
                       const SizedBox(width: 8),
                       Text(
                         'Picking up from: ',
-                        style: AppTextStyles.bodySecondaryMedium.copyWith(fontSize: 12),
+                        style: AppTextStyles.bodySecondaryMedium.copyWith(
+                          fontSize: 12,
+                        ),
                       ),
                       Expanded(
                         child: Text(
@@ -154,23 +162,30 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                     ],
                   ),
                 ),
-                
+
                 // Items List
                 Expanded(
                   child: ListView.separated(
                     padding: const EdgeInsets.all(20),
                     physics: const BouncingScrollPhysics(),
                     itemCount: cart.items.length,
-                    separatorBuilder: (context, index) => const SizedBox(height: 12),
+                    separatorBuilder: (context, index) =>
+                        const SizedBox(height: 12),
                     itemBuilder: (context, index) {
                       final item = cart.items[index];
                       final product = item.product;
 
                       // Build options subtext
                       List<String> options = [];
-                      if (item.selectedTemperature != null) options.add(item.selectedTemperature!);
-                      if (item.selectedSweetness != null) options.add('Sweet: ${item.selectedSweetness}');
-                      if (item.selectedIce != null) options.add('Ice: ${item.selectedIce}');
+                      if (item.selectedTemperature != null) {
+                        options.add(item.selectedTemperature!);
+                      }
+                      if (item.selectedSweetness != null) {
+                        options.add('Sweet: ${item.selectedSweetness}');
+                      }
+                      if (item.selectedIce != null) {
+                        options.add('Ice: ${item.selectedIce}');
+                      }
                       for (var addon in item.selectedAddons) {
                         options.add(addon.name);
                       }
@@ -193,14 +208,21 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                               decoration: BoxDecoration(
                                 color: AppColors.cardBg,
                                 borderRadius: BorderRadius.circular(12),
-                                border: Border.all(color: AppColors.border.withOpacity(0.5), width: 1),
+                                border: Border.all(
+                                  color: AppColors.border.withOpacity(0.5),
+                                  width: 1,
+                                ),
                               ),
                               child: const Center(
-                                child: Icon(Icons.restaurant, size: 24, color: AppColors.primary),
+                                child: Icon(
+                                  Icons.restaurant,
+                                  size: 24,
+                                  color: AppColors.primary,
+                                ),
                               ),
                             ),
                             const SizedBox(width: 14),
-                            
+
                             // Item Details
                             Expanded(
                               child: Column(
@@ -208,64 +230,92 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                                 children: [
                                   Text(
                                     product.name,
-                                    style: AppTextStyles.h3.copyWith(fontSize: 14),
+                                    style: AppTextStyles.h3.copyWith(
+                                      fontSize: 14,
+                                    ),
                                   ),
                                   if (optionsText.isNotEmpty) ...[
                                     const SizedBox(height: 4),
                                     Text(
                                       optionsText,
-                                      style: AppTextStyles.bodySecondary.copyWith(
-                                        fontSize: 11,
-                                        height: 1.3,
-                                      ),
+                                      style: AppTextStyles.bodySecondary
+                                          .copyWith(fontSize: 11, height: 1.3),
                                     ),
                                   ],
                                   const SizedBox(height: 10),
-                                  
+
                                   // Price & Quantity Selector Row
                                   Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
                                         formatPrice(item.totalPrice),
-                                        style: AppTextStyles.priceRegular.copyWith(fontSize: 15),
+                                        style: AppTextStyles.priceRegular
+                                            .copyWith(fontSize: 15),
                                       ),
-                                      
+
                                       // Quantity selector
                                       Container(
                                         decoration: BoxDecoration(
                                           color: AppColors.cardBg,
-                                          borderRadius: BorderRadius.circular(12),
-                                          border: Border.all(color: AppColors.border, width: 0.8),
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
+                                          border: Border.all(
+                                            color: AppColors.border,
+                                            width: 0.8,
+                                          ),
                                         ),
                                         child: Row(
                                           children: [
                                             GestureDetector(
                                               onTap: () {
-                                                ref.read(cartProvider.notifier).updateQuantity(
+                                                ref
+                                                    .read(cartProvider.notifier)
+                                                    .updateQuantity(
                                                       item.id,
                                                       item.quantity - 1,
                                                     );
                                               },
                                               child: const Padding(
-                                                padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-                                                child: Icon(Icons.remove, size: 14, color: AppColors.textMain),
+                                                padding: EdgeInsets.symmetric(
+                                                  horizontal: 8.0,
+                                                  vertical: 4.0,
+                                                ),
+                                                child: Icon(
+                                                  Icons.remove,
+                                                  size: 14,
+                                                  color: AppColors.textMain,
+                                                ),
                                               ),
                                             ),
                                             Text(
                                               '${item.quantity}',
-                                              style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold),
+                                              style: AppTextStyles.bodyMedium
+                                                  .copyWith(
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
                                             ),
                                             GestureDetector(
                                               onTap: () {
-                                                ref.read(cartProvider.notifier).updateQuantity(
+                                                ref
+                                                    .read(cartProvider.notifier)
+                                                    .updateQuantity(
                                                       item.id,
                                                       item.quantity + 1,
                                                     );
                                               },
                                               child: const Padding(
-                                                padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-                                                child: Icon(Icons.add, size: 14, color: AppColors.textMain),
+                                                padding: EdgeInsets.symmetric(
+                                                  horizontal: 8.0,
+                                                  vertical: 4.0,
+                                                ),
+                                                child: Icon(
+                                                  Icons.add,
+                                                  size: 14,
+                                                  color: AppColors.textMain,
+                                                ),
                                               ),
                                             ),
                                           ],
@@ -282,22 +332,29 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                     },
                   ),
                 ),
-                
+
                 // Bottom Billing Summary Panel
                 Container(
-                  padding: const EdgeInsets.only(left: 20, right: 20, top: 16, bottom: 24),
+                  padding: const EdgeInsets.only(
+                    left: 20,
+                    right: 20,
+                    top: 16,
+                    bottom: 24,
+                  ),
                   decoration: BoxDecoration(
                     color: AppColors.white,
                     border: const Border(
                       top: BorderSide(color: AppColors.border, width: 1.5),
                     ),
-                    borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+                    borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(24),
+                    ),
                     boxShadow: [
                       BoxShadow(
                         color: AppColors.textMain.withOpacity(0.04),
                         blurRadius: 10,
                         offset: const Offset(0, -4),
-                      )
+                      ),
                     ],
                   ),
                   child: SafeArea(
@@ -315,7 +372,8 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                                 Expanded(
                                   child: CustomTextField(
                                     controller: _voucherController,
-                                    hintText: 'Enter Promo Code (e.g. PLUFFY15)',
+                                    hintText:
+                                        'Enter Promo Code (e.g. PLUFFY15)',
                                     onChanged: (_) {
                                       if (_voucherError.isNotEmpty) {
                                         setState(() => _voucherError = '');
@@ -356,31 +414,45 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                           ] else ...[
                             // Applied code tag
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 12,
+                              ),
                               decoration: BoxDecoration(
                                 color: AppColors.success.withOpacity(0.12),
                                 borderRadius: BorderRadius.circular(16),
-                                border: Border.all(color: AppColors.success, width: 1),
+                                border: Border.all(
+                                  color: AppColors.success,
+                                  width: 1,
+                                ),
                               ),
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Row(
                                     children: [
-                                      const Icon(Icons.verified, color: AppColors.success, size: 20),
+                                      const Icon(
+                                        Icons.verified,
+                                        color: AppColors.success,
+                                        size: 20,
+                                      ),
                                       const SizedBox(width: 8),
                                       Text(
                                         'Code "${cart.appliedVoucherCode}" Applied!',
-                                        style: AppTextStyles.bodyMedium.copyWith(
-                                          color: AppColors.success,
-                                          fontWeight: FontWeight.bold,
-                                        ),
+                                        style: AppTextStyles.bodyMedium
+                                            .copyWith(
+                                              color: AppColors.success,
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                       ),
                                     ],
                                   ),
                                   GestureDetector(
                                     onTap: () {
-                                      ref.read(cartProvider.notifier).removeVoucher();
+                                      ref
+                                          .read(cartProvider.notifier)
+                                          .removeVoucher();
                                     },
                                     child: Text(
                                       'Remove',
@@ -394,26 +466,33 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                               ),
                             ),
                           ],
-                          
+
                           const SizedBox(height: 16),
-                          
+
                           // 2. Billing Breakdown Table
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text('Subtotal', style: AppTextStyles.bodySecondaryMedium),
-                              Text(formatPrice(cart.subtotal), style: AppTextStyles.bodyMedium),
+                              Text(
+                                'Subtotal',
+                                style: AppTextStyles.bodySecondaryMedium,
+                              ),
+                              Text(
+                                formatPrice(cart.subtotal),
+                                style: AppTextStyles.bodyMedium,
+                              ),
                             ],
                           ),
                           const SizedBox(height: 6),
-                          
+
                           if (cart.discountAmount > 0) ...[
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
                                   'Promo Discount',
-                                  style: AppTextStyles.bodySecondaryMedium.copyWith(color: AppColors.success),
+                                  style: AppTextStyles.bodySecondaryMedium
+                                      .copyWith(color: AppColors.success),
                                 ),
                                 Text(
                                   '-${formatPrice(cart.discountAmount)}',
@@ -426,42 +505,74 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                             ),
                             const SizedBox(height: 6),
                           ],
-                          
+
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text('Service Tax (10%)', style: AppTextStyles.bodySecondaryMedium),
-                              Text(formatPrice(cart.taxAmount), style: AppTextStyles.bodyMedium),
+                              Text(
+                                'Service Tax (10%)',
+                                style: AppTextStyles.bodySecondaryMedium,
+                              ),
+                              Text(
+                                formatPrice(cart.taxAmount),
+                                style: AppTextStyles.bodyMedium,
+                              ),
                             ],
                           ),
                           const SizedBox(height: 6),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text('Packaging & Handling', style: AppTextStyles.bodySecondaryMedium),
-                              Text(formatPrice(cart.serviceFee), style: AppTextStyles.bodyMedium),
+                              Text(
+                                'Packaging & Handling',
+                                style: AppTextStyles.bodySecondaryMedium,
+                              ),
+                              Text(
+                                formatPrice(cart.serviceFee),
+                                style: AppTextStyles.bodyMedium,
+                              ),
                             ],
                           ),
-                          
+
                           const Divider(height: 24),
-                          
+
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text('Grand Total', style: AppTextStyles.h2),
                               Text(
                                 formatPrice(cart.total),
-                                style: AppTextStyles.priceLarge.copyWith(fontSize: 20),
+                                style: AppTextStyles.priceLarge.copyWith(
+                                  fontSize: 20,
+                                ),
                               ),
                             ],
                           ),
-                          
+
                           const SizedBox(height: 16),
-                          
+
                           // 3. Proceed to Checkout CTA
                           CustomButton(
                             text: 'Proceed to Payment',
                             onPressed: () {
+                              if (!ref.read(isAuthenticatedProvider)) {
+                                ScaffoldMessenger.of(context).clearSnackBars();
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: const Text(
+                                      'Silakan login atau register sebelum checkout.',
+                                    ),
+                                    backgroundColor: AppColors.primary,
+                                    behavior: SnackBarBehavior.floating,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                  ),
+                                );
+                                context.go('/auth?redirect=/cart');
+                                return;
+                              }
+
                               PaymentSheet.show(context);
                             },
                           ),

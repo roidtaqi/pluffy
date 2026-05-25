@@ -1,19 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../app/theme/app_colors.dart';
 import '../../app/theme/app_text_styles.dart';
+import '../providers/global_providers.dart';
 
-class SplashScreen extends StatefulWidget {
+class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
 
   @override
-  State<SplashScreen> createState() => _SplashScreenState();
+  ConsumerState<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMixin {
+class _SplashScreenState extends ConsumerState<SplashScreen>
+    with TickerProviderStateMixin {
   late AnimationController _fadeController;
   late Animation<double> _fadeAnimation;
-  
+
   late AnimationController _scaleController;
   late Animation<double> _scaleAnimation;
 
@@ -25,21 +28,28 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
       vsync: this,
       duration: const Duration(milliseconds: 1500),
     );
-    _fadeAnimation = CurvedAnimation(parent: _fadeController, curve: Curves.easeIn);
+    _fadeAnimation = CurvedAnimation(
+      parent: _fadeController,
+      curve: Curves.easeIn,
+    );
 
     _scaleController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1200),
     );
-    _scaleAnimation = CurvedAnimation(parent: _scaleController, curve: Curves.elasticOut);
+    _scaleAnimation = CurvedAnimation(
+      parent: _scaleController,
+      curve: Curves.elasticOut,
+    );
 
     _fadeController.forward();
     _scaleController.forward();
 
-    // Navigate to Home after 2.5 seconds
+    // Navigate to the correct entry point after the splash moment.
     Future.delayed(const Duration(milliseconds: 2500), () {
       if (mounted) {
-        context.go('/home');
+        final isAuthenticated = ref.read(isAuthenticatedProvider);
+        context.go(isAuthenticated ? '/home' : '/auth');
       }
     });
   }
@@ -83,7 +93,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
               ),
             ),
           ),
-          
+
           // Main content
           Center(
             child: Column(
@@ -102,7 +112,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
                           color: AppColors.textMain.withOpacity(0.06),
                           blurRadius: 16,
                           offset: const Offset(0, 8),
-                        )
+                        ),
                       ],
                     ),
                     child: ClipOval(
@@ -141,7 +151,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
               ],
             ),
           ),
-          
+
           // Bottom loading/brand indicator
           Positioned(
             bottom: 60,
@@ -154,7 +164,9 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
                     height: 24,
                     child: CircularProgressIndicator(
                       strokeWidth: 2,
-                      valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        AppColors.primary,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 16),
