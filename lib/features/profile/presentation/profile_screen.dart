@@ -10,7 +10,7 @@ import '../../../shared/widgets/custom_button.dart';
 import '../../../shared/widgets/custom_text_field.dart';
 
 class ProfileScreen extends ConsumerWidget {
-  const ProfileScreen({Key? key}) : super(key: key);
+  const ProfileScreen({super.key});
 
   void _copyVoucherCode(BuildContext context, String code) {
     Clipboard.setData(ClipboardData(text: code));
@@ -194,6 +194,72 @@ class ProfileScreen extends ConsumerWidget {
     });
   }
 
+  Future<void> _showLogoutConfirmation(
+    BuildContext context,
+    WidgetRef ref,
+  ) async {
+    final shouldLogout = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          title: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: const BoxDecoration(
+                  color: AppColors.cardBg,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.logout,
+                  color: AppColors.error,
+                  size: 22,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  'Logout dari akun?',
+                  style: AppTextStyles.h3,
+                ),
+              ),
+            ],
+          ),
+          content: Text(
+            'Kamu akan keluar dari akun Pluffy saat ini. Kamu perlu login kembali untuk melihat profil, poin loyalty, dan riwayat pesanan.',
+            style: AppTextStyles.bodySecondary,
+          ),
+          actionsPadding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext, false),
+              child: const Text('Batal'),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.error,
+                foregroundColor: AppColors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              onPressed: () => Navigator.pop(dialogContext, true),
+              child: const Text('Logout'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (shouldLogout != true || !context.mounted) return;
+
+    ref.read(userProfileProvider.notifier).logout();
+    context.go('/auth');
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final points = ref.watch(loyaltyPointsProvider);
@@ -366,7 +432,7 @@ class ProfileScreen extends ConsumerWidget {
                     child: Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: AppColors.cardBg.withOpacity(0.5),
+                        color: AppColors.cardBg.withValues(alpha: 0.5),
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(color: AppColors.border, width: 1),
                       ),
@@ -395,7 +461,7 @@ class ProfileScreen extends ConsumerWidget {
                     child: Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: AppColors.cardBg.withOpacity(0.5),
+                        color: AppColors.cardBg.withValues(alpha: 0.5),
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(color: AppColors.border, width: 1),
                       ),
@@ -586,10 +652,7 @@ class ProfileScreen extends ConsumerWidget {
                       title: 'Logout',
                       subtitle: 'Keluar dari akun ini',
                       iconColor: AppColors.error,
-                      onTap: () {
-                        ref.read(userProfileProvider.notifier).logout();
-                        context.go('/auth');
-                      },
+                      onTap: () => _showLogoutConfirmation(context, ref),
                     ),
                   ],
                 ),

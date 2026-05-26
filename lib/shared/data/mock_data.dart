@@ -45,23 +45,23 @@ class MockData {
 
   // Common Customization Addons
   static const List<CustomizationAddon> soufflableAddons = [
-    CustomizationAddon(name: 'Extra Whipped Cream', price: 1.20),
-    CustomizationAddon(name: 'Uji Matcha Ice Cream', price: 2.00),
-    CustomizationAddon(name: 'Maple Syrup Drizzle', price: 0.80),
-    CustomizationAddon(name: 'Fresh Strawberries', price: 1.50),
+    CustomizationAddon(name: 'Extra Whipped Cream', price: 12000),
+    CustomizationAddon(name: 'Uji Matcha Ice Cream', price: 20000),
+    CustomizationAddon(name: 'Maple Syrup Drizzle', price: 8000),
+    CustomizationAddon(name: 'Fresh Strawberries', price: 15000),
   ];
 
   static const List<CustomizationAddon> drinkAddons = [
-    CustomizationAddon(name: 'Brown Sugar Boba', price: 1.20),
-    CustomizationAddon(name: 'Extra Espresso Shot', price: 1.00),
-    CustomizationAddon(name: 'Oat Milk Swap', price: 0.80),
-    CustomizationAddon(name: 'Matcha Cold Foam', price: 1.50),
+    CustomizationAddon(name: 'Brown Sugar Boba', price: 12000),
+    CustomizationAddon(name: 'Extra Espresso Shot', price: 10000),
+    CustomizationAddon(name: 'Oat Milk Swap', price: 8000),
+    CustomizationAddon(name: 'Matcha Cold Foam', price: 15000),
   ];
 
   static const List<CustomizationAddon> bakeryAddons = [
-    CustomizationAddon(name: 'Premium Butter Spread', price: 0.80),
-    CustomizationAddon(name: 'Local Honey Drizzle', price: 1.00),
-    CustomizationAddon(name: 'House Chocolate Fudge', price: 1.20),
+    CustomizationAddon(name: 'Premium Butter Spread', price: 8000),
+    CustomizationAddon(name: 'Local Honey Drizzle', price: 10000),
+    CustomizationAddon(name: 'House Chocolate Fudge', price: 12000),
   ];
 
   // Products

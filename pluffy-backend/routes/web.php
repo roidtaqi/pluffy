@@ -12,3 +12,6 @@ Route::get('/admin', [AdminOrderController::class, 'index'])
 
 Route::patch('/admin/orders/{order}/status', [AdminOrderController::class, 'updateStatus'])
     ->name('admin.orders.status');
+
+Route::patch('/admin/products/{product}', [AdminOrderController::class, 'updateProduct'])
+    ->name('admin.products.update');

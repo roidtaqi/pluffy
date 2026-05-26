@@ -8,7 +8,7 @@ import '../../../shared/providers/global_providers.dart';
 import '../data/orders_repository.dart';
 
 class OrderTrackerScreen extends ConsumerWidget {
-  const OrderTrackerScreen({Key? key}) : super(key: key);
+  const OrderTrackerScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -142,7 +142,7 @@ class OrderTrackerScreen extends ConsumerWidget {
                   const Icon(Icons.info_outline, size: 12, color: AppColors.success),
                   const SizedBox(width: 4),
                   Text(
-                    'Simulated kitchen progression updates dynamically!',
+                    'Kitchen status updates automatically from the admin board.',
                     style: AppTextStyles.bodySecondaryMedium.copyWith(
                       color: AppColors.success,
                       fontSize: 11,
@@ -192,7 +192,7 @@ class OrderTrackerScreen extends ConsumerWidget {
                                       boxShadow: isActive
                                           ? [
                                               BoxShadow(
-                                                color: AppColors.primary.withOpacity(0.3),
+                                                color: AppColors.primary.withValues(alpha: 0.3),
                                                 blurRadius: 6,
                                                 spreadRadius: 2,
                                               )
@@ -262,7 +262,7 @@ class OrderTrackerScreen extends ConsumerWidget {
                                   step['desc']!,
                                   style: AppTextStyles.bodySecondary.copyWith(
                                     fontSize: 12,
-                                    color: isDone ? AppColors.textMain.withOpacity(0.8) : AppColors.textSecondary,
+                                    color: isDone ? AppColors.textMain.withValues(alpha: 0.8) : AppColors.textSecondary,
                                   ),
                                 ),
                               ],

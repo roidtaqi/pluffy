@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Order;
+use App\Models\Product;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -45,5 +46,46 @@ class AdminPortalTest extends TestCase
         ])->assertRedirect('/admin');
 
         $this->assertSame('preparing', $order->fresh()->status);
+    }
+
+    public function test_admin_portal_lists_and_updates_products(): void
+    {
+        $product = Product::create([
+            'name' => 'Test Souffle',
+            'description' => 'Original description',
+            'base_price' => 45000,
+            'category' => 'Soufflé',
+            'rating' => 4.5,
+            'availability_status' => 'available',
+            'stock' => 10,
+            'is_best_seller' => false,
+            'is_seasonal' => false,
+            'is_active' => true,
+        ]);
+
+        $this->get('/admin')
+            ->assertOk()
+            ->assertSee('Product Manager')
+            ->assertSee('Test Souffle');
+
+        $this->patch("/admin/products/{$product->id}", [
+            'name' => 'Updated Souffle',
+            'description' => 'Updated description',
+            'base_price' => 55000,
+            'category' => 'Seasonal',
+            'rating' => 4.9,
+            'availability_status' => 'available',
+            'stock' => 3,
+            'is_best_seller' => '1',
+            'is_active' => '1',
+        ])->assertRedirect('/admin#products');
+
+        $product->refresh();
+
+        $this->assertSame('Updated Souffle', $product->name);
+        $this->assertSame(55000, $product->base_price);
+        $this->assertSame(3, $product->stock);
+        $this->assertTrue((bool) $product->is_best_seller);
+        $this->assertFalse((bool) $product->is_seasonal);
     }
 }

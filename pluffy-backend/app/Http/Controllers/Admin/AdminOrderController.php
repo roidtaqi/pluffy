@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
+use App\Models\Product;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -14,6 +15,9 @@ class AdminOrderController extends Controller
     {
         $orders = Order::with(['items.product', 'user'])
             ->orderByDesc('created_at')
+            ->get();
+        $products = Product::orderBy('category')
+            ->orderBy('name')
             ->get();
 
         $statusCounts = [
@@ -29,6 +33,7 @@ class AdminOrderController extends Controller
             'ordersByStatus' => $orders->groupBy('status'),
             'statusCounts' => $statusCounts,
             'statuses' => $statuses,
+            'products' => $products,
         ]);
     }
 
@@ -45,5 +50,37 @@ class AdminOrderController extends Controller
         return redirect()
             ->route('admin.orders.index')
             ->with('success', "Order {$order->id} updated to {$validated['status']}.");
+    }
+
+    public function updateProduct(Request $request, Product $product): RedirectResponse
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'required|string',
+            'base_price' => 'required|integer|min:0',
+            'category' => 'required|string|max:255',
+            'rating' => 'nullable|numeric|min:0|max:5',
+            'availability_status' => 'required|string|in:available,sold_out,seasonal',
+            'stock' => 'required|integer|min:0',
+            'is_best_seller' => 'nullable|boolean',
+            'is_seasonal' => 'nullable|boolean',
+            'is_active' => 'nullable|boolean',
+        ]);
+
+        $validated['is_best_seller'] = $request->boolean('is_best_seller');
+        $validated['is_seasonal'] = $request->boolean('is_seasonal');
+        $validated['is_active'] = $request->boolean('is_active');
+
+        if ($validated['stock'] === 0) {
+            $validated['availability_status'] = 'sold_out';
+        } elseif ($validated['availability_status'] === 'sold_out') {
+            $validated['availability_status'] = 'available';
+        }
+
+        $product->update($validated);
+
+        return redirect()
+            ->to(route('admin.orders.index').'#products')
+            ->with('success', "Product {$product->name} updated.");
     }
 }

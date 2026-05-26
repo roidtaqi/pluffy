@@ -10,9 +10,9 @@ class ProductDetailSheet extends ConsumerStatefulWidget {
   final Product product;
 
   const ProductDetailSheet({
-    Key? key,
+    super.key,
     required this.product,
-  }) : super(key: key);
+  });
 
   static void show(BuildContext context, Product product) {
     showModalBottomSheet(
@@ -78,10 +78,7 @@ class _ProductDetailSheetState extends ConsumerState<ProductDetailSheet> {
   }
 
   String _formatPrice(double price) {
-    if (price >= 1000) {
-      return 'Rp ${price.toStringAsFixed(0).replaceAllMapped(RegExp(r"(\d{1,3})(?=(\d{3})+(?!\d))"), (Match m) => "${m[1]}.")}';
-    }
-    return '\$${price.toStringAsFixed(2)}';
+    return 'Rp ${price.toStringAsFixed(0).replaceAllMapped(RegExp(r"(\d{1,3})(?=(\d{3})+(?!\d))"), (Match m) => "${m[1]}.")}';
   }
 
   @override
@@ -430,7 +427,7 @@ class _ProductDetailSheetState extends ConsumerState<ProductDetailSheet> {
             ),
             boxShadow: [
               BoxShadow(
-                color: AppColors.textMain.withOpacity(0.04),
+                color: AppColors.textMain.withValues(alpha: 0.04),
                 blurRadius: 10,
                 offset: const Offset(0, -4),
               )

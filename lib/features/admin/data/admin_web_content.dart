@@ -6,7 +6,7 @@ class AdminWebContent {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pluffy Café - Kitchen Admin Console 🥞</title>
+  <title>Pluffy Cafe - Kitchen Admin Console</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,500&display=swap" rel="stylesheet">
@@ -728,6 +728,493 @@ class AdminWebContent {
       text-align: center;
       color: var(--accent);
     }
+
+    /* Cleaner operations UI */
+    :root {
+      --primary: #8f2424;
+      --bg: #f6f2ee;
+      --card-bg: #fffaf5;
+      --card-hover: #fff5ed;
+      --border: #dfd2c8;
+      --gold-border: #c8a46f;
+      --accent: #2f2723;
+      --text-main: #2f2723;
+      --text-secondary: #756a63;
+      --success: #34784d;
+      --success-light: #e8f3ec;
+      --warning: #b07422;
+      --info: #2d7795;
+      --shadow: 0 10px 24px rgba(75, 51, 40, 0.08);
+    }
+
+    body {
+      background:
+        linear-gradient(180deg, #fbf8f4 0%, var(--bg) 240px);
+      color: var(--text-main);
+    }
+
+    header {
+      min-height: 74px;
+      padding: 12px 28px;
+      background-color: rgba(255, 250, 245, 0.96);
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 8px 20px rgba(75, 51, 40, 0.07);
+      backdrop-filter: blur(12px);
+      gap: 18px;
+    }
+
+    .brand img {
+      width: 40px !important;
+      height: 40px !important;
+      border-radius: 8px !important;
+      border-color: var(--border) !important;
+      background: #fff;
+    }
+
+    .brand-text h1,
+    .products-title-area h2,
+    .modal-title {
+      font-family: 'Outfit', sans-serif;
+      color: var(--text-main);
+      letter-spacing: 0;
+    }
+
+    .brand-text h1 {
+      font-size: 21px;
+    }
+
+    .brand-text p {
+      font-size: 12px;
+      letter-spacing: 0;
+      text-transform: none;
+      font-weight: 700;
+      color: var(--text-secondary);
+    }
+
+    .header-nav {
+      flex: 1;
+      justify-content: center;
+      min-width: 280px;
+    }
+
+    .nav-tabs {
+      background-color: #eee5dd;
+      border-color: var(--border);
+      border-radius: 8px;
+      padding: 3px;
+    }
+
+    .nav-tab {
+      min-height: 34px;
+      padding: 0 14px;
+      border-radius: 6px;
+      color: #675b54;
+      letter-spacing: 0;
+      transition: background-color 0.18s ease, color 0.18s ease;
+    }
+
+    .nav-tab:hover {
+      color: var(--text-main);
+      background-color: rgba(255, 255, 255, 0.62);
+    }
+
+    .nav-tab.active {
+      background-color: var(--card-bg);
+      color: var(--primary);
+      box-shadow: 0 1px 4px rgba(75, 51, 40, 0.12);
+    }
+
+    .controls {
+      gap: 14px;
+      justify-content: flex-end;
+    }
+
+    .switch-container {
+      min-height: 36px;
+      padding: 0 10px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--card-bg);
+    }
+
+    .switch-label {
+      color: var(--text-secondary);
+      letter-spacing: 0;
+      text-transform: none;
+      white-space: nowrap;
+    }
+
+    .switch-label.active {
+      color: var(--primary);
+    }
+
+    .slider {
+      background-color: #d8cbc0;
+      border-color: #cdbeb2;
+    }
+
+    .slider:before {
+      background-color: #fff;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18);
+    }
+
+    input:checked + .slider {
+      background-color: var(--success);
+      border-color: var(--success);
+    }
+
+    input:checked + .slider:before {
+      background-color: #fff;
+    }
+
+    .server-status {
+      min-height: 36px;
+      border-radius: 8px;
+      border-color: rgba(52, 120, 77, 0.22);
+      background-color: var(--success-light);
+      color: var(--success);
+      letter-spacing: 0;
+    }
+
+    .view-panel {
+      width: min(1480px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 22px 0 32px;
+    }
+
+    .dashboard {
+      grid-template-columns: repeat(4, minmax(260px, 1fr));
+      gap: 12px;
+      min-height: 560px;
+      height: calc(100vh - 118px);
+    }
+
+    .column,
+    .product-admin-card,
+    .modal-container {
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background-color: var(--card-bg);
+      box-shadow: var(--shadow);
+    }
+
+    .column {
+      min-width: 0;
+    }
+
+    .column-header {
+      min-height: 52px;
+      padding: 12px 14px;
+      background-color: #fff6ee;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .column-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-main);
+      font-size: 13px;
+      letter-spacing: 0;
+    }
+
+    .column-title::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: currentColor;
+      flex: 0 0 auto;
+    }
+
+    .placed .column-title { color: var(--warning); }
+    .preparing .column-title { color: #7d4f9f; }
+    .ready .column-title { color: var(--info); }
+    .completed .column-title { color: var(--success); }
+
+    .column-badge {
+      background-color: #f1e8df;
+      color: var(--text-main);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+    }
+
+    .orders-list {
+      padding: 10px;
+      gap: 10px;
+    }
+
+    .order-card {
+      gap: 10px;
+      padding: 12px;
+      border-radius: 8px;
+      background-color: #ffffff;
+      border-color: var(--border);
+      box-shadow: 0 6px 14px rgba(75, 51, 40, 0.06);
+      transition: border-color 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    .order-card:hover,
+    .product-admin-card:hover {
+      transform: none;
+      border-color: #c9b4a4;
+      background-color: #ffffff;
+      box-shadow: 0 10px 20px rgba(75, 51, 40, 0.09);
+    }
+
+    .order-id,
+    .product-price-label {
+      color: var(--primary);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    .order-outlet {
+      border-radius: 6px;
+      background-color: #f3ebe4;
+      color: var(--text-secondary);
+      letter-spacing: 0;
+      text-transform: none;
+    }
+
+    .order-items {
+      border-color: var(--border);
+      gap: 0;
+    }
+
+    .item-row {
+      gap: 10px;
+      padding: 5px 0;
+    }
+
+    .item-price {
+      white-space: nowrap;
+    }
+
+    .btn,
+    .next-action {
+      min-height: 34px;
+      border-radius: 8px;
+      background-color: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+      box-shadow: none;
+      white-space: nowrap;
+    }
+
+    .btn:hover {
+      background-color: #681a1a;
+      color: #fff;
+      border-color: #681a1a;
+      box-shadow: none;
+    }
+
+    .btn-secondary {
+      background-color: #ffffff;
+      color: var(--text-main);
+      border-color: var(--border);
+    }
+
+    .btn-secondary:hover {
+      background-color: #f3ebe4;
+      color: var(--text-main);
+      border-color: #c9b4a4;
+    }
+
+    .completed-badge,
+    .badge-status.available {
+      color: var(--success);
+      background-color: var(--success-light);
+      border-color: rgba(52, 120, 77, 0.22);
+    }
+
+    .empty-state {
+      min-height: 120px;
+      height: auto;
+      border: 1px dashed #ccbdb0;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.45);
+    }
+
+    .empty-icon {
+      display: none;
+    }
+
+    .products-header {
+      padding: 0 0 16px;
+      margin-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .products-title-area h2 {
+      font-size: 22px;
+    }
+
+    .products-title-area p {
+      max-width: 760px;
+      line-height: 1.45;
+    }
+
+    .products-grid {
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 12px;
+    }
+
+    .product-admin-card {
+      padding: 16px;
+      gap: 12px;
+    }
+
+    .product-admin-info h3 {
+      color: var(--text-main);
+      line-height: 1.25;
+    }
+
+    .product-admin-info .category-badge {
+      color: var(--text-secondary);
+      letter-spacing: 0;
+    }
+
+    .product-admin-desc {
+      min-height: 0;
+      color: var(--text-secondary);
+    }
+
+    .badge-status {
+      border-radius: 999px;
+      background-color: #f3ebe4;
+      color: var(--text-secondary);
+    }
+
+    .badge-status.sold_out {
+      color: var(--primary);
+      background-color: #f8e8e8;
+      border-color: rgba(143, 36, 36, 0.2);
+    }
+
+    .badge-status.active {
+      color: var(--info);
+      background-color: #e8f2f6;
+      border-color: rgba(45, 119, 149, 0.2);
+    }
+
+    .badge-status.hidden {
+      color: var(--text-secondary);
+      background-color: #eee5dd;
+      border-color: var(--border);
+    }
+
+    .product-admin-footer {
+      border-top-color: var(--border);
+    }
+
+    .modal-overlay {
+      background-color: rgba(47, 39, 35, 0.42);
+      backdrop-filter: blur(5px);
+    }
+
+    .modal-container {
+      max-width: 560px;
+      overflow: hidden;
+    }
+
+    .modal-header,
+    .modal-footer {
+      background-color: #fff6ee;
+      border-color: var(--border);
+    }
+
+    .modal-title {
+      font-size: 18px;
+    }
+
+    .modal-close-btn {
+      color: var(--text-secondary);
+    }
+
+    .form-label {
+      color: var(--text-secondary);
+      letter-spacing: 0;
+      text-transform: none;
+    }
+
+    .form-control {
+      min-height: 40px;
+      border-radius: 8px;
+      background-color: #ffffff;
+      color: var(--text-main);
+      border: 1px solid var(--border);
+    }
+
+    .form-control:focus {
+      border-color: var(--primary);
+      background-color: #ffffff;
+      box-shadow: 0 0 0 3px rgba(143, 36, 36, 0.1);
+    }
+
+    .error-card-connection {
+      border-radius: 8px;
+      background-color: #fff;
+      color: var(--text-main);
+    }
+
+    @media (max-width: 1220px) {
+      header {
+        align-items: flex-start;
+        flex-wrap: wrap;
+      }
+
+      .header-nav {
+        order: 3;
+        flex-basis: 100%;
+        justify-content: flex-start;
+      }
+
+      .dashboard {
+        grid-template-columns: repeat(2, minmax(260px, 1fr));
+        height: auto;
+      }
+    }
+
+    @media (max-width: 720px) {
+      header {
+        padding: 12px 16px;
+      }
+
+      .controls,
+      .nav-tabs,
+      .products-header,
+      .product-admin-header,
+      .form-row {
+        width: 100%;
+      }
+
+      .controls,
+      .products-header,
+      .product-admin-header {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .nav-tabs {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .view-panel {
+        width: min(100% - 20px, 1480px);
+        padding-top: 14px;
+      }
+
+      .dashboard,
+      .products-grid,
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+
+      .modal-body {
+        padding: 18px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -743,8 +1230,8 @@ class AdminWebContent {
     
     <div class="header-nav">
       <div class="nav-tabs">
-        <button class="nav-tab active" id="tab-orders" onclick="switchView('orders')">🛎️ Order Monitor</button>
-        <button class="nav-tab" id="tab-products" onclick="switchView('products')">🥞 Product Manager</button>
+        <button class="nav-tab active" id="tab-orders" onclick="switchView('orders')">Order Monitor</button>
+        <button class="nav-tab" id="tab-products" onclick="switchView('products')">Product Manager</button>
       </div>
     </div>
 
@@ -769,12 +1256,11 @@ class AdminWebContent {
       <!-- PLACED COLUMN -->
       <div class="column placed">
         <div class="column-header">
-          <div class="column-title">📥 Pesanan Baru</div>
+          <div class="column-title">Pesanan Baru</div>
           <div class="column-badge" id="badge-placed">0</div>
         </div>
         <div class="orders-list" id="list-placed">
           <div class="empty-state">
-            <div class="empty-icon">🛎️</div>
             <div>Belum ada pesanan masuk</div>
           </div>
         </div>
@@ -783,12 +1269,11 @@ class AdminWebContent {
       <!-- PREPARING COLUMN -->
       <div class="column preparing">
         <div class="column-header">
-          <div class="column-title">🍳 Dapur (Kitchen)</div>
+          <div class="column-title">Dapur</div>
           <div class="column-badge" id="badge-preparing">0</div>
         </div>
         <div class="orders-list" id="list-preparing">
           <div class="empty-state">
-            <div class="empty-icon">🔥</div>
             <div>Dapur sedang kosong</div>
           </div>
         </div>
@@ -797,12 +1282,11 @@ class AdminWebContent {
       <!-- READY COLUMN -->
       <div class="column ready">
         <div class="column-header">
-          <div class="column-title">🥞 Siap Diambil</div>
+          <div class="column-title">Siap Diambil</div>
           <div class="column-badge" id="badge-ready">0</div>
         </div>
         <div class="orders-list" id="list-ready">
           <div class="empty-state">
-            <div class="empty-icon"></div>
             <div>Belum ada hidangan siap diambil</div>
           </div>
         </div>
@@ -811,12 +1295,11 @@ class AdminWebContent {
       <!-- COMPLETED COLUMN -->
       <div class="column completed">
         <div class="column-header">
-          <div class="column-title">✅ Selesai</div>
+          <div class="column-title">Selesai</div>
           <div class="column-badge" id="badge-completed">0</div>
         </div>
         <div class="orders-list" id="list-completed">
           <div class="empty-state">
-            <div class="empty-icon">📦</div>
             <div>Belum ada pesanan selesai</div>
           </div>
         </div>
@@ -828,11 +1311,11 @@ class AdminWebContent {
   <main class="view-panel" id="view-products">
     <div class="products-header">
       <div class="products-title-area">
-        <h2>🥞 Product Catalog & Availability</h2>
-        <p>Kelola harga, stok sisa, detail produk soufflé, kopi, dan atur ketersediaan menu secara dinamis (Terkoneksi ke Laravel API).</p>
+        <h2>Product Catalog & Availability</h2>
+        <p>Kelola harga, stok, detail produk, dan ketersediaan menu dari satu panel yang terhubung ke Laravel API.</p>
       </div>
       <div>
-        <button class="btn btn-secondary" onclick="fetchProducts()"><span style="font-size:14px;">🔄</span> Refresh List</button>
+        <button class="btn btn-secondary" onclick="fetchProducts()">Refresh List</button>
       </div>
     </div>
     
@@ -901,7 +1384,7 @@ class AdminWebContent {
 
       <div class="modal-footer">
         <button class="btn btn-secondary" onclick="closeModal()">Batal</button>
-        <button class="btn" onclick="saveProductChanges()">Simpan Perubahan 💾</button>
+        <button class="btn" onclick="saveProductChanges()">Simpan Perubahan</button>
       </div>
     </div>
   </div>
@@ -956,8 +1439,7 @@ class AdminWebContent {
       const grid = document.getElementById('products-grid');
       grid.innerHTML = `
         <div class="error-card-connection">
-          <span style="font-size:40px; margin-bottom:12px; display:block;">🔌</span>
-          <h4 style="font-family:'Playfair Display', serif; font-size:18px; margin-bottom:8px; color:var(--accent);">Koneksi API Backend Terputus</h4>
+          <h4 style="font-size:18px; margin-bottom:8px; color:var(--accent);">Koneksi API Backend Terputus</h4>
           <p style="font-size:13px; color:var(--text-secondary); max-width:400px; margin: 0 auto; line-height:1.6;">\${msg}</p>
         </div>
       `;
@@ -974,7 +1456,6 @@ class AdminWebContent {
       if (products.length === 0) {
         grid.innerHTML = `
           <div class="empty-state" style="grid-column: 1/-1; padding:50px;">
-            <div class="empty-icon">🍽️</div>
             <div>Belum ada produk terdaftar di database</div>
           </div>
         `;
@@ -987,25 +1468,25 @@ class AdminWebContent {
 
         let statusBadge = '';
         if (isSoldOut) {
-          statusBadge += `<span class="badge-status sold_out">❌ Sold Out</span>`;
+          statusBadge += `<span class="badge-status sold_out">Sold Out</span>`;
         } else {
-          statusBadge += `<span class="badge-status available">✅ Bisa Dipesan</span>`;
+          statusBadge += `<span class="badge-status available">Bisa Dipesan</span>`;
         }
 
         if (isHidden) {
-          statusBadge += `<span class="badge-status hidden">👁️ Draft (Hidden)</span>`;
+          statusBadge += `<span class="badge-status hidden">Draft</span>`;
         } else {
-          statusBadge += `<span class="badge-status active">🌐 Publik</span>`;
+          statusBadge += `<span class="badge-status active">Publik</span>`;
         }
 
         // Stock indicators
         let stockBadge = '';
         if (p.stock === 0) {
-          stockBadge = `<span class="badge-status sold_out" style="border-style:dashed;">🚫 Habis (Stok: 0)</span>`;
+          stockBadge = `<span class="badge-status sold_out" style="border-style:dashed;">Stok: 0</span>`;
         } else if (p.stock <= 5) {
-          stockBadge = `<span class="badge-status" style="color:#FFA500; background:rgba(255,165,0,0.1); border-color:rgba(255,165,0,0.2);">⚠️ Stok Menipis: \${p.stock} pcs</span>`;
+          stockBadge = `<span class="badge-status" style="color:#9a641f; background:#fff2df; border-color:#e7c896;">Stok menipis: \${p.stock} pcs</span>`;
         } else {
-          stockBadge = `<span class="badge-status" style="color:var(--text-secondary); background:rgba(255,255,255,0.03); border-color:var(--border);">📦 Stok: \${p.stock} pcs</span>`;
+          stockBadge = `<span class="badge-status" style="color:var(--text-secondary); background:#f3ebe4; border-color:var(--border);">Stok: \${p.stock} pcs</span>`;
         }
 
         grid.innerHTML += `
@@ -1023,11 +1504,11 @@ class AdminWebContent {
             <div class="product-admin-badges">
               \${statusBadge}
               \${stockBadge}
-              \${p.is_best_seller ? '<span class="badge-status" style="background:rgba(232, 201, 160, 0.15); border-color:var(--gold-border); color:var(--gold-border);">⭐ Best Seller</span>' : ''}
+              \${p.is_best_seller ? '<span class="badge-status" style="background:#fff2df; border-color:#e7c896; color:#9a641f;">Best Seller</span>' : ''}
             </div>
 
             <div class="product-admin-footer">
-              <button class="btn btn-secondary" onclick="openEditModal(\${p.id})">Edit Detail 📝</button>
+              <button class="btn btn-secondary" onclick="openEditModal(\${p.id})">Edit Detail</button>
             </div>
           </div>
         `;
@@ -1175,13 +1656,13 @@ class AdminWebContent {
 
       let actionButtonHtml = '';
       if (order.status === 'placed') {
-        actionButtonHtml = `<button class="btn" onclick="updateStatus('\${order.id}', 'preparing')">Terima & Masak 🍳</button>`;
+        actionButtonHtml = `<button class="btn" onclick="updateStatus('\${order.id}', 'preparing')">Terima & Masak</button>`;
       } else if (order.status === 'preparing') {
-        actionButtonHtml = `<button class="btn" onclick="updateStatus('\${order.id}', 'ready')">Mark as Ready 🥞</button>`;
+        actionButtonHtml = `<button class="btn" onclick="updateStatus('\${order.id}', 'ready')">Mark as Ready</button>`;
       } else if (order.status === 'ready') {
-        actionButtonHtml = `<button class="btn btn-secondary" onclick="updateStatus('\${order.id}', 'completed')">Selesaikan Pengambilan ✅</button>`;
+        actionButtonHtml = `<button class="btn btn-secondary" onclick="updateStatus('\${order.id}', 'completed')">Selesaikan Pengambilan</button>`;
       } else {
-        actionButtonHtml = `<div class="completed-badge">✨ Selesai</div>`;
+        actionButtonHtml = `<div class="completed-badge">Selesai</div>`;
       }
 
       return `
@@ -1218,10 +1699,10 @@ class AdminWebContent {
       };
 
       const emptyStates = {
-        placed: `<div class="empty-state"><div class="empty-icon">🛎️</div><div>Belum ada pesanan masuk</div></div>`,
-        preparing: `<div class="empty-state"><div class="empty-icon">🔥</div><div>Dapur sedang kosong</div></div>`,
-        ready: `<div class="empty-state"><div class="empty-icon">🥞</div><div>Belum ada hidangan siap diambil</div></div>`,
-        completed: `<div class="empty-state"><div class="empty-icon">📦</div><div>Belum ada pesanan selesai</div></div>`
+        placed: `<div class="empty-state"><div>Belum ada pesanan masuk</div></div>`,
+        preparing: `<div class="empty-state"><div>Dapur sedang kosong</div></div>`,
+        ready: `<div class="empty-state"><div>Belum ada hidangan siap diambil</div></div>`,
+        completed: `<div class="empty-state"><div>Belum ada pesanan selesai</div></div>`
       };
 
       // Clear lists

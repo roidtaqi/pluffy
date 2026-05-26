@@ -281,9 +281,7 @@ final productsProvider = FutureProvider<List<Product>>((ref) async {
         }).toList();
       }
     }
-  } catch (e) {
-    print("Gagal mengambil produk dari Laravel, fallback ke Mock Data: $e");
-  }
+  } catch (_) {}
 
   // Jika gagal terhubung ke backend, gunakan MockData lokal
   return MockData.products;
@@ -326,8 +324,5 @@ List<CustomizationAddon> _getAddonsForCategory(String categoryName) {
 }
 
 String formatPrice(double price) {
-  if (price >= 1000) {
-    return 'Rp ${price.toStringAsFixed(0).replaceAllMapped(RegExp(r"(\d{1,3})(?=(\d{3})+(?!\d))"), (Match m) => "${m[1]}.")}';
-  }
-  return '\$${price.toStringAsFixed(2)}';
+  return 'Rp ${price.toStringAsFixed(0).replaceAllMapped(RegExp(r"(\d{1,3})(?=(\d{3})+(?!\d))"), (Match m) => "${m[1]}.")}';
 }

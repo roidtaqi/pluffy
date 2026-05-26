@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
@@ -23,12 +25,13 @@ class OrdersState {
   OrdersState copyWith({
     List<OrderModel>? orders,
     OrderModel? activeOrder,
+    bool clearActiveOrder = false,
     bool? autoSimulate,
     int? serverPort,
   }) {
     return OrdersState(
       orders: orders ?? this.orders,
-      activeOrder: activeOrder, // Can set to null
+      activeOrder: clearActiveOrder ? null : activeOrder ?? this.activeOrder,
       autoSimulate: autoSimulate ?? this.autoSimulate,
       serverPort: serverPort ?? this.serverPort,
     );
@@ -38,6 +41,7 @@ class OrdersState {
 class OrdersNotifier extends StateNotifier<OrdersState> {
   final Ref _ref;
   Timer? _statusTimer;
+  Timer? _backendRefreshTimer;
   AdminWebServer? _webServer;
 
   OrdersState get currentState => state;
@@ -176,6 +180,7 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
             orders: [newOrder, ...state.orders],
             activeOrder: newOrder,
           );
+          _startBackendStatusSync();
 
           // Update user profile dynamically in global provider
           final currentUser = _ref.read(userProfileProvider).valueOrNull;
@@ -227,6 +232,7 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
       orders: [newOrder, ...state.orders],
       activeOrder: newOrder,
     );
+    _startBackendStatusSync();
 
     // Start status progression simulator if auto-simulation is enabled
     if (state.autoSimulate) {
@@ -265,14 +271,80 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
     if (activeOrder != null && activeOrder.id == orderId) {
       activeOrder = activeOrder.copyWith(status: newStatus);
       if (newStatus == OrderStatus.completed) {
-        activeOrder = null; // Clear active order upon completion
+        activeOrder = null;
       }
     }
 
-    state = state.copyWith(orders: updatedOrders, activeOrder: activeOrder);
+    state = state.copyWith(
+      orders: updatedOrders,
+      activeOrder: activeOrder,
+      clearActiveOrder: newStatus == OrderStatus.completed,
+    );
+
+    if (newStatus == OrderStatus.completed) {
+      _stopBackendStatusSync();
+    } else if (activeOrder != null) {
+      _startBackendStatusSync();
+    }
 
     // Trigger local notification so customer receives it
     _triggerNotificationForStatus(orderId, newStatus);
+  }
+
+  void _startBackendStatusSync() {
+    if (_backendRefreshTimer != null) return;
+
+    refreshActiveOrderFromBackend();
+    _backendRefreshTimer = Timer.periodic(const Duration(seconds: 5), (_) {
+      refreshActiveOrderFromBackend();
+    });
+  }
+
+  void _stopBackendStatusSync() {
+    _backendRefreshTimer?.cancel();
+    _backendRefreshTimer = null;
+  }
+
+  Future<void> refreshActiveOrderFromBackend() async {
+    final activeOrder = state.activeOrder;
+    if (activeOrder == null) {
+      _stopBackendStatusSync();
+      return;
+    }
+
+    try {
+      final response = await http.get(
+        Uri.parse('http://127.0.0.1:8000/api/orders'),
+      );
+      if (response.statusCode != 200) return;
+
+      final Map<String, dynamic> body = jsonDecode(response.body);
+      final orders = body['orders'];
+      if (orders is! List) return;
+
+      Map<String, dynamic>? remoteOrder;
+      for (final order in orders) {
+        if (order is Map<String, dynamic> && order['id'] == activeOrder.id) {
+          remoteOrder = order;
+          break;
+        }
+      }
+
+      final statusName = remoteOrder?['status'];
+      if (statusName is! String) return;
+
+      OrderStatus? remoteStatus;
+      for (final status in OrderStatus.values) {
+        if (status.name == statusName) {
+          remoteStatus = status;
+          break;
+        }
+      }
+
+      if (remoteStatus != null && remoteStatus != activeOrder.status) {
+        updateOrderStatus(activeOrder.id, remoteStatus);
+      }
+    } catch (_) {}
   }
 
   // Trigger global in-app notification state for real-time customer popups
@@ -344,6 +416,7 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
   @override
   void dispose() {
     _statusTimer?.cancel();
+    _backendRefreshTimer?.cancel();
     _webServer?.stop();
     super.dispose();
   }
