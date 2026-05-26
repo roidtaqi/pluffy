@@ -9,10 +9,7 @@ import '../domain/product.dart';
 class ProductDetailSheet extends ConsumerStatefulWidget {
   final Product product;
 
-  const ProductDetailSheet({
-    super.key,
-    required this.product,
-  });
+  const ProductDetailSheet({super.key, required this.product});
 
   static void show(BuildContext context, Product product) {
     showModalBottomSheet(
@@ -44,18 +41,22 @@ class _ProductDetailSheetState extends ConsumerState<ProductDetailSheet> {
     super.initState();
     _quantity = widget.product.stock == 0 ? 0 : 1;
     // Pre-select defaults if options are available
-    if (widget.product.availableSweetness != null && widget.product.availableSweetness!.isNotEmpty) {
+    if (widget.product.availableSweetness != null &&
+        widget.product.availableSweetness!.isNotEmpty) {
       _selectedSweetness = widget.product.availableSweetness!.contains('100%')
           ? '100%'
           : widget.product.availableSweetness!.first;
     }
-    if (widget.product.availableIce != null && widget.product.availableIce!.isNotEmpty) {
+    if (widget.product.availableIce != null &&
+        widget.product.availableIce!.isNotEmpty) {
       _selectedIce = widget.product.availableIce!.contains('Normal')
           ? 'Normal'
           : widget.product.availableIce!.first;
     }
-    if (widget.product.availableTemperature != null && widget.product.availableTemperature!.isNotEmpty) {
-      _selectedTemperature = widget.product.availableTemperature!.contains('Iced')
+    if (widget.product.availableTemperature != null &&
+        widget.product.availableTemperature!.isNotEmpty) {
+      _selectedTemperature =
+          widget.product.availableTemperature!.contains('Iced')
           ? 'Iced'
           : widget.product.availableTemperature!.first;
     }
@@ -63,7 +64,10 @@ class _ProductDetailSheetState extends ConsumerState<ProductDetailSheet> {
 
   double _calculateCurrentPrice() {
     double unitPrice = widget.product.basePrice;
-    double addonsPrice = _selectedAddons.fold(0.0, (sum, addon) => sum + addon.price);
+    double addonsPrice = _selectedAddons.fold(
+      0.0,
+      (sum, addon) => sum + addon.price,
+    );
     return (unitPrice + addonsPrice) * _quantity;
   }
 
@@ -98,7 +102,7 @@ class _ProductDetailSheetState extends ConsumerState<ProductDetailSheet> {
             borderRadius: BorderRadius.circular(2),
           ),
         ),
-        
+
         // Scrollable content
         Expanded(
           child: SingleChildScrollView(
@@ -124,9 +128,9 @@ class _ProductDetailSheetState extends ConsumerState<ProductDetailSheet> {
                     ),
                   ),
                 ),
-                
+
                 const SizedBox(height: 20),
-                
+
                 // Name & Price Row
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -143,23 +147,34 @@ class _ProductDetailSheetState extends ConsumerState<ProductDetailSheet> {
                           const SizedBox(height: 4),
                           Row(
                             children: [
-                              const Icon(Icons.star, color: Colors.amber, size: 16),
+                              const Icon(
+                                Icons.star,
+                                color: Colors.amber,
+                                size: 16,
+                              ),
                               const SizedBox(width: 4),
                               Text(
                                 '${product.rating}',
-                                style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold),
+                                style: AppTextStyles.bodyMedium.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                               const SizedBox(width: 8),
                               if (product.isSeasonal)
                                 Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                    vertical: 2,
+                                  ),
                                   decoration: BoxDecoration(
                                     color: AppColors.accent,
                                     borderRadius: BorderRadius.circular(6),
                                   ),
                                   child: Text(
                                     'SEASONAL SPECIAL',
-                                    style: AppTextStyles.badgeText.copyWith(fontSize: 8),
+                                    style: AppTextStyles.badgeText.copyWith(
+                                      fontSize: 8,
+                                    ),
                                   ),
                                 ),
                             ],
@@ -173,9 +188,9 @@ class _ProductDetailSheetState extends ConsumerState<ProductDetailSheet> {
                     ),
                   ],
                 ),
-                
+
                 const SizedBox(height: 12),
-                
+
                 // Description
                 Text(
                   product.description,
@@ -184,40 +199,42 @@ class _ProductDetailSheetState extends ConsumerState<ProductDetailSheet> {
                     height: 1.4,
                   ),
                 ),
-                
+
                 const SizedBox(height: 12),
                 Row(
                   children: [
                     Icon(
-                      product.stock == 0 ? Icons.error_outline : Icons.inventory_2_outlined,
+                      product.stock == 0
+                          ? Icons.error_outline
+                          : Icons.inventory_2_outlined,
                       size: 16,
                       color: product.stock == 0
                           ? AppColors.primary
                           : product.stock <= 5
-                              ? Colors.orange
-                              : AppColors.textSecondary,
+                          ? Colors.orange
+                          : AppColors.textSecondary,
                     ),
                     const SizedBox(width: 6),
                     Text(
                       product.stock == 0
                           ? 'Sold Out - Habis Terjual'
                           : product.stock <= 5
-                              ? 'Stok Terbatas: Sisa ${product.stock} pcs!'
-                              : 'Stok Tersedia: ${product.stock} pcs',
+                          ? 'Stok Terbatas: Sisa ${product.stock} pcs!'
+                          : 'Stok Tersedia: ${product.stock} pcs',
                       style: AppTextStyles.bodySecondaryMedium.copyWith(
                         color: product.stock == 0
                             ? AppColors.primary
                             : product.stock <= 5
-                                ? Colors.orange
-                                : AppColors.textSecondary,
+                            ? Colors.orange
+                            : AppColors.textSecondary,
                         fontSize: 12,
                       ),
                     ),
                   ],
                 ),
-                
+
                 const Divider(height: 36),
-                
+
                 // 1. TEMPERATURE SECTION
                 if (product.availableTemperature != null) ...[
                   Text('Choose Temperature', style: AppTextStyles.h3),
@@ -227,29 +244,42 @@ class _ProductDetailSheetState extends ConsumerState<ProductDetailSheet> {
                       final isSelected = _selectedTemperature == temp;
                       return Expanded(
                         child: GestureDetector(
-                          onTap: () => setState(() => _selectedTemperature = temp),
+                          onTap: () =>
+                              setState(() => _selectedTemperature = temp),
                           child: Container(
                             margin: const EdgeInsets.symmetric(horizontal: 4),
                             padding: const EdgeInsets.symmetric(vertical: 12),
                             decoration: BoxDecoration(
-                              color: isSelected ? AppColors.primary : AppColors.cardBg,
+                              color: isSelected
+                                  ? AppColors.primary
+                                  : AppColors.cardBg,
                               borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: isSelected ? AppColors.primary : AppColors.border),
+                              border: Border.all(
+                                color: isSelected
+                                    ? AppColors.primary
+                                    : AppColors.border,
+                              ),
                             ),
                             child: Center(
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Icon(
-                                    temp == 'Hot' ? Icons.local_fire_department : Icons.ac_unit,
+                                    temp == 'Hot'
+                                        ? Icons.local_fire_department
+                                        : Icons.ac_unit,
                                     size: 16,
-                                    color: isSelected ? AppColors.white : AppColors.textMain,
+                                    color: isSelected
+                                        ? AppColors.white
+                                        : AppColors.textMain,
                                   ),
                                   const SizedBox(width: 6),
                                   Text(
                                     temp,
                                     style: AppTextStyles.bodyMedium.copyWith(
-                                      color: isSelected ? AppColors.white : AppColors.textMain,
+                                      color: isSelected
+                                          ? AppColors.white
+                                          : AppColors.textMain,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
@@ -286,23 +316,33 @@ class _ProductDetailSheetState extends ConsumerState<ProductDetailSheet> {
                       final isSelected = _selectedSweetness == level;
                       return Expanded(
                         child: GestureDetector(
-                          onTap: () => setState(() => _selectedSweetness = level),
+                          onTap: () =>
+                              setState(() => _selectedSweetness = level),
                           child: Container(
                             margin: const EdgeInsets.symmetric(horizontal: 4),
                             padding: const EdgeInsets.symmetric(vertical: 10),
                             decoration: BoxDecoration(
-                              color: isSelected ? AppColors.primary : AppColors.white,
+                              color: isSelected
+                                  ? AppColors.primary
+                                  : AppColors.white,
                               borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: isSelected ? AppColors.primary : AppColors.border),
+                              border: Border.all(
+                                color: isSelected
+                                    ? AppColors.primary
+                                    : AppColors.border,
+                              ),
                             ),
                             child: Center(
                               child: Text(
                                 level,
-                                style: AppTextStyles.bodySecondaryMedium.copyWith(
-                                  color: isSelected ? AppColors.white : AppColors.textMain,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 12,
-                                ),
+                                style: AppTextStyles.bodySecondaryMedium
+                                    .copyWith(
+                                      color: isSelected
+                                          ? AppColors.white
+                                          : AppColors.textMain,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 12,
+                                    ),
                               ),
                             ),
                           ),
@@ -340,18 +380,27 @@ class _ProductDetailSheetState extends ConsumerState<ProductDetailSheet> {
                             margin: const EdgeInsets.symmetric(horizontal: 4),
                             padding: const EdgeInsets.symmetric(vertical: 10),
                             decoration: BoxDecoration(
-                              color: isSelected ? AppColors.primary : AppColors.white,
+                              color: isSelected
+                                  ? AppColors.primary
+                                  : AppColors.white,
                               borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: isSelected ? AppColors.primary : AppColors.border),
+                              border: Border.all(
+                                color: isSelected
+                                    ? AppColors.primary
+                                    : AppColors.border,
+                              ),
                             ),
                             child: Center(
                               child: Text(
                                 ice,
-                                style: AppTextStyles.bodySecondaryMedium.copyWith(
-                                  color: isSelected ? AppColors.white : AppColors.textMain,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 12,
-                                ),
+                                style: AppTextStyles.bodySecondaryMedium
+                                    .copyWith(
+                                      color: isSelected
+                                          ? AppColors.white
+                                          : AppColors.textMain,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 12,
+                                    ),
                               ),
                             ),
                           ),
@@ -373,11 +422,20 @@ class _ProductDetailSheetState extends ConsumerState<ProductDetailSheet> {
                         onTap: () => _toggleAddon(addon),
                         child: Container(
                           margin: const EdgeInsets.symmetric(vertical: 4),
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 12,
+                          ),
                           decoration: BoxDecoration(
-                            color: isSelected ? AppColors.cardBg : AppColors.white,
+                            color: isSelected
+                                ? AppColors.cardBg
+                                : AppColors.white,
                             borderRadius: BorderRadius.circular(16),
-                            border: Border.all(color: isSelected ? AppColors.primary : AppColors.border),
+                            border: Border.all(
+                              color: isSelected
+                                  ? AppColors.primary
+                                  : AppColors.border,
+                            ),
                           ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -385,15 +443,21 @@ class _ProductDetailSheetState extends ConsumerState<ProductDetailSheet> {
                               Row(
                                 children: [
                                   Icon(
-                                    isSelected ? Icons.check_box : Icons.check_box_outline_blank,
-                                    color: isSelected ? AppColors.primary : AppColors.textSecondary,
+                                    isSelected
+                                        ? Icons.check_box
+                                        : Icons.check_box_outline_blank,
+                                    color: isSelected
+                                        ? AppColors.primary
+                                        : AppColors.textSecondary,
                                     size: 20,
                                   ),
                                   const SizedBox(width: 12),
                                   Text(
                                     addon.name,
                                     style: AppTextStyles.bodyMedium.copyWith(
-                                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                                      fontWeight: isSelected
+                                          ? FontWeight.bold
+                                          : FontWeight.normal,
                                     ),
                                   ),
                                 ],
@@ -401,7 +465,9 @@ class _ProductDetailSheetState extends ConsumerState<ProductDetailSheet> {
                               Text(
                                 '+${_formatPrice(addon.price)}',
                                 style: AppTextStyles.priceRegular.copyWith(
-                                  color: isSelected ? AppColors.primary : AppColors.textSecondary,
+                                  color: isSelected
+                                      ? AppColors.primary
+                                      : AppColors.textSecondary,
                                 ),
                               ),
                             ],
@@ -416,10 +482,15 @@ class _ProductDetailSheetState extends ConsumerState<ProductDetailSheet> {
             ),
           ),
         ),
-        
+
         // Quantity & Action Button Bottom Panel
         Container(
-          padding: const EdgeInsets.only(left: 24, right: 24, top: 16, bottom: 28),
+          padding: const EdgeInsets.only(
+            left: 24,
+            right: 24,
+            top: 16,
+            bottom: 28,
+          ),
           decoration: BoxDecoration(
             color: AppColors.background,
             border: const Border(
@@ -430,7 +501,7 @@ class _ProductDetailSheetState extends ConsumerState<ProductDetailSheet> {
                 color: AppColors.textMain.withValues(alpha: 0.04),
                 blurRadius: 10,
                 offset: const Offset(0, -4),
-              )
+              ),
             ],
           ),
           child: Row(
@@ -445,29 +516,42 @@ class _ProductDetailSheetState extends ConsumerState<ProductDetailSheet> {
                 child: Row(
                   children: [
                     IconButton(
-                      icon: const Icon(Icons.remove, size: 16, color: AppColors.textMain),
-                      onPressed: product.stock == 0 ? null : () {
-                        if (_quantity > 1) {
-                          setState(() => _quantity--);
-                        }
-                      },
+                      icon: const Icon(
+                        Icons.remove,
+                        size: 16,
+                        color: AppColors.textMain,
+                      ),
+                      onPressed: product.stock == 0
+                          ? null
+                          : () {
+                              if (_quantity > 1) {
+                                setState(() => _quantity--);
+                              }
+                            },
                     ),
                     Text(
                       '$_quantity',
                       style: AppTextStyles.h3.copyWith(fontSize: 16),
                     ),
                     IconButton(
-                      icon: const Icon(Icons.add, size: 16, color: AppColors.textMain),
-                      onPressed: product.stock == 0 || _quantity >= product.stock ? null : () {
-                        setState(() => _quantity++);
-                      },
+                      icon: const Icon(
+                        Icons.add,
+                        size: 16,
+                        color: AppColors.textMain,
+                      ),
+                      onPressed:
+                          product.stock == 0 || _quantity >= product.stock
+                          ? null
+                          : () {
+                              setState(() => _quantity++);
+                            },
                     ),
                   ],
                 ),
               ),
-              
+
               const SizedBox(width: 16),
-              
+
               // Add to Cart button
               Expanded(
                 child: CustomButton(
@@ -477,15 +561,17 @@ class _ProductDetailSheetState extends ConsumerState<ProductDetailSheet> {
                   onPressed: product.stock == 0
                       ? null
                       : () {
-                          ref.read(cartProvider.notifier).addItem(
-                            product: product,
-                            quantity: _quantity,
-                            selectedSweetness: _selectedSweetness,
-                            selectedIce: _selectedIce,
-                            selectedTemperature: _selectedTemperature,
-                            selectedAddons: _selectedAddons,
-                          );
-                          
+                          ref
+                              .read(cartProvider.notifier)
+                              .addItem(
+                                product: product,
+                                quantity: _quantity,
+                                selectedSweetness: _selectedSweetness,
+                                selectedIce: _selectedIce,
+                                selectedTemperature: _selectedTemperature,
+                                selectedAddons: _selectedAddons,
+                              );
+
                           Navigator.pop(context);
 
                           // Confirmation banner
@@ -494,10 +580,15 @@ class _ProductDetailSheetState extends ConsumerState<ProductDetailSheet> {
                             SnackBar(
                               content: Row(
                                 children: [
-                                  const Icon(Icons.shopping_bag, color: Colors.white),
+                                  const Icon(
+                                    Icons.shopping_bag,
+                                    color: Colors.white,
+                                  ),
                                   const SizedBox(width: 12),
                                   Expanded(
-                                    child: Text('Added $_quantity x ${product.name} to Cart!'),
+                                    child: Text(
+                                      'Added $_quantity x ${product.name} to Cart!',
+                                    ),
                                   ),
                                 ],
                               ),

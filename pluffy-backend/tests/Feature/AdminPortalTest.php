@@ -12,6 +12,25 @@ class AdminPortalTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        config()->set('pluffy_admin.email', 'admin@pluffy.cafe');
+        config()->set('pluffy_admin.password', 'password123');
+    }
+
+    public function test_admin_portal_requires_login(): void
+    {
+        $this->get('/admin')
+            ->assertRedirect('/admin/login');
+
+        $this->post('/admin/login', [
+            'email' => 'admin@pluffy.cafe',
+            'password' => 'password123',
+        ])->assertRedirect('/admin');
+    }
+
     public function test_admin_portal_lists_orders_and_updates_status(): void
     {
         $user = User::create([
@@ -36,14 +55,16 @@ class AdminPortalTest extends TestCase
             'payment_method' => 'Pluffy Pay Wallet',
         ]);
 
-        $this->get('/admin')
+        $this->withSession(['pluffy_admin_authenticated' => true])
+            ->get('/admin')
             ->assertOk()
             ->assertSee('Pluffy Kitchen Board')
             ->assertSee('ORD-TEST-1');
 
-        $this->patch("/admin/orders/{$order->id}/status", [
-            'status' => 'preparing',
-        ])->assertRedirect('/admin');
+        $this->withSession(['pluffy_admin_authenticated' => true])
+            ->patch("/admin/orders/{$order->id}/status", [
+                'status' => 'preparing',
+            ])->assertRedirect('/admin');
 
         $this->assertSame('preparing', $order->fresh()->status);
     }
@@ -63,22 +84,24 @@ class AdminPortalTest extends TestCase
             'is_active' => true,
         ]);
 
-        $this->get('/admin')
+        $this->withSession(['pluffy_admin_authenticated' => true])
+            ->get('/admin')
             ->assertOk()
             ->assertSee('Product Manager')
             ->assertSee('Test Souffle');
 
-        $this->patch("/admin/products/{$product->id}", [
-            'name' => 'Updated Souffle',
-            'description' => 'Updated description',
-            'base_price' => 55000,
-            'category' => 'Seasonal',
-            'rating' => 4.9,
-            'availability_status' => 'available',
-            'stock' => 3,
-            'is_best_seller' => '1',
-            'is_active' => '1',
-        ])->assertRedirect('/admin#products');
+        $this->withSession(['pluffy_admin_authenticated' => true])
+            ->patch("/admin/products/{$product->id}", [
+                'name' => 'Updated Souffle',
+                'description' => 'Updated description',
+                'base_price' => 55000,
+                'category' => 'Seasonal',
+                'rating' => 4.9,
+                'availability_status' => 'available',
+                'stock' => 3,
+                'is_best_seller' => '1',
+                'is_active' => '1',
+            ])->assertRedirect('/admin#products');
 
         $product->refresh();
 

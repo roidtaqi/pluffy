@@ -18,7 +18,7 @@ class CustomTextField extends StatelessWidget {
   final int maxLines;
 
   const CustomTextField({
-    Key? key,
+    super.key,
     this.controller,
     required this.hintText,
     this.prefixIcon,
@@ -32,7 +32,7 @@ class CustomTextField extends StatelessWidget {
     this.onTap,
     this.readOnly = false,
     this.maxLines = 1,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +51,7 @@ class CustomTextField extends StatelessWidget {
       cursorColor: AppColors.primary,
       decoration: InputDecoration(
         filled: true,
-        fillColor: AppColors.cardBg.withOpacity(0.4),
+        fillColor: AppColors.cardBg.withValues(alpha: 0.4),
         hintText: hintText,
         hintStyle: AppTextStyles.bodySecondary,
         prefixIcon: prefixIcon != null

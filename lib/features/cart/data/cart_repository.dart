@@ -6,7 +6,7 @@ class CartState {
   final List<CartItem> items;
   final String? appliedVoucherCode;
   final double discountPercent; // e.g., 0.15 for 15%
-  final double discountFlat;    // e.g., 5.0 for $5.00 off
+  final double discountFlat; // e.g., 5.0 for $5.00 off
 
   const CartState({
     this.items = const [],
@@ -28,11 +28,15 @@ class CartState {
     return amt.clamp(0.0, subtotal);
   }
 
-  double get taxAmount => (subtotal - discountAmount) * 0.10; // Mock 10% Service Tax
+  double get taxAmount =>
+      (subtotal - discountAmount) * 0.10; // Mock 10% Service Tax
 
-  double get serviceFee => subtotal >= 1000 ? 2000.0 : (subtotal > 0 ? 1.50 : 0.0); // Flat packaging / transaction fee
+  double get serviceFee => subtotal >= 1000
+      ? 2000.0
+      : (subtotal > 0 ? 1.50 : 0.0); // Flat packaging / transaction fee
 
-  double get total => (subtotal - discountAmount + taxAmount + serviceFee).clamp(0.0, double.infinity);
+  double get total => (subtotal - discountAmount + taxAmount + serviceFee)
+      .clamp(0.0, double.infinity);
 
   CartState copyWith({
     List<CartItem>? items,
@@ -69,7 +73,7 @@ class CartNotifier extends StateNotifier<CartState> {
       if (item.selectedSweetness != selectedSweetness) return false;
       if (item.selectedIce != selectedIce) return false;
       if (item.selectedTemperature != selectedTemperature) return false;
-      
+
       // Compare lists of addons
       if (item.selectedAddons.length != selectedAddons.length) return false;
       for (var addon in selectedAddons) {
@@ -81,7 +85,9 @@ class CartNotifier extends StateNotifier<CartState> {
     if (existingIndex >= 0) {
       // Customizations match, increment quantity
       final existing = list[existingIndex];
-      list[existingIndex] = existing.copyWith(quantity: existing.quantity + quantity);
+      list[existingIndex] = existing.copyWith(
+        quantity: existing.quantity + quantity,
+      );
     } else {
       // No match, create new unique cart item
       final newItem = CartItem(
@@ -145,7 +151,7 @@ class CartNotifier extends StateNotifier<CartState> {
       );
       return true;
     }
-    
+
     return false; // Code invalid
   }
 

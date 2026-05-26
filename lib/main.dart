@@ -7,15 +7,11 @@ import 'features/orders/data/orders_repository.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(
-    const ProviderScope(
-      child: PluffyApp(),
-    ),
-  );
+  runApp(const ProviderScope(child: PluffyApp()));
 }
 
 class PluffyApp extends ConsumerWidget {
-  const PluffyApp({Key? key}) : super(key: key);
+  const PluffyApp({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -28,12 +24,7 @@ class PluffyApp extends ConsumerWidget {
       theme: AppTheme.lightTheme,
       routerConfig: goRouter,
       builder: (context, child) {
-        return Stack(
-          children: [
-            if (child != null) child,
-            const GlobalNotificationOverlay(),
-          ],
-        );
+        return Stack(children: [?child, const GlobalNotificationOverlay()]);
       },
     );
   }

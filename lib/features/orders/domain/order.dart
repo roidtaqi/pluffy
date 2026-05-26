@@ -1,11 +1,6 @@
 import '../../cart/domain/cart_item.dart';
 
-enum OrderStatus {
-  placed,
-  preparing,
-  ready,
-  completed,
-}
+enum OrderStatus { placed, preparing, ready, completed }
 
 extension OrderStatusExtension on OrderStatus {
   String get displayName {

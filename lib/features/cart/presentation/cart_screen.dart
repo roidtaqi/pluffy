@@ -10,7 +10,7 @@ import '../../cart/data/cart_repository.dart';
 import '../../checkout/presentation/payment_sheet.dart';
 
 class CartScreen extends ConsumerStatefulWidget {
-  const CartScreen({Key? key}) : super(key: key);
+  const CartScreen({super.key});
 
   @override
   ConsumerState<CartScreen> createState() => _CartScreenState();
@@ -129,7 +129,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                     vertical: 12,
                   ),
                   decoration: BoxDecoration(
-                    color: AppColors.cardBg.withOpacity(0.4),
+                    color: AppColors.cardBg.withValues(alpha: 0.4),
                     border: const Border(
                       bottom: BorderSide(color: AppColors.border, width: 1),
                     ),
@@ -209,7 +209,9 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                                 color: AppColors.cardBg,
                                 borderRadius: BorderRadius.circular(12),
                                 border: Border.all(
-                                  color: AppColors.border.withOpacity(0.5),
+                                  color: AppColors.border.withValues(
+                                    alpha: 0.5,
+                                  ),
                                   width: 1,
                                 ),
                               ),
@@ -351,7 +353,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: AppColors.textMain.withOpacity(0.04),
+                        color: AppColors.textMain.withValues(alpha: 0.04),
                         blurRadius: 10,
                         offset: const Offset(0, -4),
                       ),
@@ -419,7 +421,9 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                                 vertical: 12,
                               ),
                               decoration: BoxDecoration(
-                                color: AppColors.success.withOpacity(0.12),
+                                color: AppColors.success.withValues(
+                                  alpha: 0.12,
+                                ),
                                 borderRadius: BorderRadius.circular(16),
                                 border: Border.all(
                                   color: AppColors.success,

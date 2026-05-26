@@ -12,13 +12,14 @@ import '../data/orders_repository.dart';
 import '../domain/order.dart';
 
 class OrdersScreen extends ConsumerStatefulWidget {
-  const OrdersScreen({Key? key}) : super(key: key);
+  const OrdersScreen({super.key});
 
   @override
   ConsumerState<OrdersScreen> createState() => _OrdersScreenState();
 }
 
-class _OrdersScreenState extends ConsumerState<OrdersScreen> with SingleTickerProviderStateMixin {
+class _OrdersScreenState extends ConsumerState<OrdersScreen>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
   @override
@@ -36,20 +37,22 @@ class _OrdersScreenState extends ConsumerState<OrdersScreen> with SingleTickerPr
   void _triggerReorder(OrderModel order) {
     // 1. Copy past items with their exact customizations into active cart
     final cartNotifier = ref.read(cartProvider.notifier);
-    
-    // In our mock history, items might be empty, so we populate with a popular item if so, 
+
+    // In our mock history, items might be empty, so we populate with a popular item if so,
     // but if items exist, we copy them!
     if (order.items.isEmpty) {
       // Seed with a mock default popular product for historical reorder simulation
-      final mockProduct = ref.read(cartProvider).items.isNotEmpty 
-          ? ref.read(cartProvider).items.first.product 
+      final mockProduct = ref.read(cartProvider).items.isNotEmpty
+          ? ref.read(cartProvider).items.first.product
           : null;
       if (mockProduct != null) {
         cartNotifier.addItem(product: mockProduct);
       } else {
         // Fallback default
         cartNotifier.addItem(
-          product: MockData.products.firstWhere((p) => p.id == 'prod_original_souffle'),
+          product: MockData.products.firstWhere(
+            (p) => p.id == 'prod_original_souffle',
+          ),
           selectedSweetness: '100%',
         );
       }
@@ -102,7 +105,9 @@ class _OrdersScreenState extends ConsumerState<OrdersScreen> with SingleTickerPr
           unselectedLabelColor: AppColors.textSecondary,
           indicatorColor: AppColors.primary,
           indicatorWeight: 3.0,
-          labelStyle: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold),
+          labelStyle: AppTextStyles.bodyMedium.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
           tabs: const [
             Tab(text: 'Active Order'),
             Tab(text: 'History'),
@@ -120,7 +125,7 @@ class _OrdersScreenState extends ConsumerState<OrdersScreen> with SingleTickerPr
                 ? Container(
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
-                      color: AppColors.cardBg.withOpacity(0.5),
+                      color: AppColors.cardBg.withValues(alpha: 0.5),
                       borderRadius: BorderRadius.circular(24),
                       border: Border.all(color: AppColors.border, width: 1.5),
                     ),
@@ -131,9 +136,12 @@ class _OrdersScreenState extends ConsumerState<OrdersScreen> with SingleTickerPr
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 4,
+                              ),
                               decoration: BoxDecoration(
-                                color: AppColors.accent.withOpacity(0.2),
+                                color: AppColors.accent.withValues(alpha: 0.2),
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: Text(
@@ -151,7 +159,7 @@ class _OrdersScreenState extends ConsumerState<OrdersScreen> with SingleTickerPr
                           ],
                         ),
                         const SizedBox(height: 16),
-                        
+
                         Text(
                           'Preparing your soufflés...',
                           style: AppTextStyles.h2,
@@ -161,16 +169,17 @@ class _OrdersScreenState extends ConsumerState<OrdersScreen> with SingleTickerPr
                           activeOrder.status.description,
                           style: AppTextStyles.bodySecondary,
                         ),
-                        
+
                         const SizedBox(height: 24),
-                        
+
                         // Small high-fidelity stepper simulation visual
                         Row(
                           children: List.generate(4, (index) {
-                            final int currentStepIndex = activeOrder.status.index;
+                            final int currentStepIndex =
+                                activeOrder.status.index;
                             final bool isDone = index <= currentStepIndex;
                             final bool isLast = index == 3;
-                            
+
                             return Expanded(
                               child: Row(
                                 children: [
@@ -179,16 +188,24 @@ class _OrdersScreenState extends ConsumerState<OrdersScreen> with SingleTickerPr
                                     width: 20,
                                     height: 20,
                                     decoration: BoxDecoration(
-                                      color: isDone ? AppColors.primary : AppColors.background,
+                                      color: isDone
+                                          ? AppColors.primary
+                                          : AppColors.background,
                                       shape: BoxShape.circle,
                                       border: Border.all(
-                                        color: isDone ? AppColors.primary : AppColors.border,
+                                        color: isDone
+                                            ? AppColors.primary
+                                            : AppColors.border,
                                         width: 1.5,
                                       ),
                                     ),
                                     child: Center(
                                       child: isDone
-                                          ? const Icon(Icons.check, size: 10, color: AppColors.white)
+                                          ? const Icon(
+                                              Icons.check,
+                                              size: 10,
+                                              color: AppColors.white,
+                                            )
                                           : null,
                                     ),
                                   ),
@@ -197,7 +214,9 @@ class _OrdersScreenState extends ConsumerState<OrdersScreen> with SingleTickerPr
                                     Expanded(
                                       child: Container(
                                         height: 3,
-                                        color: index < currentStepIndex ? AppColors.primary : AppColors.border,
+                                        color: index < currentStepIndex
+                                            ? AppColors.primary
+                                            : AppColors.border,
                                       ),
                                     ),
                                 ],
@@ -205,9 +224,9 @@ class _OrdersScreenState extends ConsumerState<OrdersScreen> with SingleTickerPr
                             );
                           }),
                         ),
-                        
+
                         const Divider(height: 48),
-                        
+
                         // Total breakdown
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -218,13 +237,15 @@ class _OrdersScreenState extends ConsumerState<OrdersScreen> with SingleTickerPr
                             ),
                             Text(
                               formatPrice(activeOrder.total),
-                              style: AppTextStyles.h3.copyWith(color: AppColors.primary),
+                              style: AppTextStyles.h3.copyWith(
+                                color: AppColors.primary,
+                              ),
                             ),
                           ],
                         ),
-                        
+
                         const SizedBox(height: 24),
-                        
+
                         CustomButton(
                           text: 'Track Order Progress 🥞',
                           onPressed: () {
@@ -235,7 +256,10 @@ class _OrdersScreenState extends ConsumerState<OrdersScreen> with SingleTickerPr
                     ),
                   )
                 : Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 60.0),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20.0,
+                      vertical: 60.0,
+                    ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -244,7 +268,10 @@ class _OrdersScreenState extends ConsumerState<OrdersScreen> with SingleTickerPr
                           decoration: BoxDecoration(
                             color: AppColors.cardBg,
                             shape: BoxShape.circle,
-                            border: Border.all(color: AppColors.border, width: 1),
+                            border: Border.all(
+                              color: AppColors.border,
+                              width: 1,
+                            ),
                           ),
                           child: const Icon(
                             Icons.receipt_long_outlined,
@@ -253,10 +280,7 @@ class _OrdersScreenState extends ConsumerState<OrdersScreen> with SingleTickerPr
                           ),
                         ),
                         const SizedBox(height: 20),
-                        Text(
-                          'No Active Orders',
-                          style: AppTextStyles.h2,
-                        ),
+                        Text('No Active Orders', style: AppTextStyles.h2),
                         const SizedBox(height: 8),
                         Text(
                           'You don\'t have any pending orders. Go to the menu to satisfy your cravings!',
@@ -268,7 +292,8 @@ class _OrdersScreenState extends ConsumerState<OrdersScreen> with SingleTickerPr
                           text: 'Order Now',
                           width: 160,
                           onPressed: () {
-                            ref.read(navigationIndexProvider.notifier).state = 1;
+                            ref.read(navigationIndexProvider.notifier).state =
+                                1;
                             context.go('/menu');
                           },
                         ),
@@ -276,7 +301,7 @@ class _OrdersScreenState extends ConsumerState<OrdersScreen> with SingleTickerPr
                     ),
                   ),
           ),
-          
+
           // 2. ORDER HISTORY TAB
           ListView.separated(
             padding: const EdgeInsets.all(20),
@@ -285,7 +310,9 @@ class _OrdersScreenState extends ConsumerState<OrdersScreen> with SingleTickerPr
             separatorBuilder: (context, index) => const SizedBox(height: 12),
             itemBuilder: (context, index) {
               final order = pastOrders[index];
-              final dateString = DateFormat('MMM dd, yyyy • hh:mm a').format(order.orderDate);
+              final dateString = DateFormat(
+                'MMM dd, yyyy • hh:mm a',
+              ).format(order.orderDate);
 
               return Container(
                 padding: const EdgeInsets.all(16),
@@ -311,14 +338,19 @@ class _OrdersScreenState extends ConsumerState<OrdersScreen> with SingleTickerPr
                             const SizedBox(height: 2),
                             Text(
                               dateString,
-                              style: AppTextStyles.bodySecondary.copyWith(fontSize: 11),
+                              style: AppTextStyles.bodySecondary.copyWith(
+                                fontSize: 11,
+                              ),
                             ),
                           ],
                         ),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
                           decoration: BoxDecoration(
-                            color: AppColors.success.withOpacity(0.12),
+                            color: AppColors.success.withValues(alpha: 0.12),
                             borderRadius: BorderRadius.circular(6),
                           ),
                           child: Text(
@@ -331,9 +363,9 @@ class _OrdersScreenState extends ConsumerState<OrdersScreen> with SingleTickerPr
                         ),
                       ],
                     ),
-                    
+
                     const Divider(height: 24),
-                    
+
                     // Price details and quick reorder
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -343,25 +375,34 @@ class _OrdersScreenState extends ConsumerState<OrdersScreen> with SingleTickerPr
                           children: [
                             Text(
                               'Total Payment',
-                              style: AppTextStyles.bodySecondary.copyWith(fontSize: 11),
+                              style: AppTextStyles.bodySecondary.copyWith(
+                                fontSize: 11,
+                              ),
                             ),
                             const SizedBox(height: 2),
                             Text(
                               formatPrice(order.total),
-                              style: AppTextStyles.priceLarge.copyWith(fontSize: 15),
+                              style: AppTextStyles.priceLarge.copyWith(
+                                fontSize: 15,
+                              ),
                             ),
                           ],
                         ),
-                        
+
                         ElevatedButton.icon(
                           onPressed: () => _triggerReorder(order),
                           icon: const Icon(Icons.replay, size: 14),
                           label: const Text('Reorder'),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.primary.withOpacity(0.08),
+                            backgroundColor: AppColors.primary.withValues(
+                              alpha: 0.08,
+                            ),
                             foregroundColor: AppColors.primary,
                             elevation: 0,
-                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 14,
+                              vertical: 8,
+                            ),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),

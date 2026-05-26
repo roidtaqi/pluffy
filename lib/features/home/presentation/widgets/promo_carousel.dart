@@ -5,7 +5,7 @@ import '../../../../app/theme/app_text_styles.dart';
 import '../../../../shared/data/mock_data.dart';
 
 class PromoCarousel extends StatefulWidget {
-  const PromoCarousel({Key? key}) : super(key: key);
+  const PromoCarousel({super.key});
 
   @override
   State<PromoCarousel> createState() => _PromoCarouselState();
@@ -30,9 +30,7 @@ class _PromoCarouselState extends State<PromoCarousel> {
         backgroundColor: AppColors.primary,
         behavior: SnackBarBehavior.floating,
         duration: const Duration(seconds: 2),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
     );
   }
@@ -61,10 +59,10 @@ class _PromoCarouselState extends State<PromoCarousel> {
                   border: Border.all(color: AppColors.border, width: 1.2),
                   boxShadow: [
                     BoxShadow(
-                      color: AppColors.textMain.withOpacity(0.02),
+                      color: AppColors.textMain.withValues(alpha: 0.02),
                       blurRadius: 6,
                       offset: const Offset(0, 3),
-                    )
+                    ),
                   ],
                 ),
                 child: Stack(
@@ -91,14 +89,19 @@ class _PromoCarouselState extends State<PromoCarousel> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 4,
+                                ),
                                 decoration: BoxDecoration(
                                   color: AppColors.primary,
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Text(
                                   'LIMITED PROMO',
-                                  style: AppTextStyles.badgeText.copyWith(fontSize: 9),
+                                  style: AppTextStyles.badgeText.copyWith(
+                                    fontSize: 9,
+                                  ),
                                 ),
                               ),
                               const SizedBox(height: 8),
@@ -121,35 +124,44 @@ class _PromoCarouselState extends State<PromoCarousel> {
                               ),
                             ],
                           ),
-                          
+
                           // Code display row
                           GestureDetector(
-                            onTap: () => _copyToClipboard(banner['code'] ?? '', context),
+                            onTap: () =>
+                                _copyToClipboard(banner['code'] ?? '', context),
                             child: MouseRegion(
                               cursor: SystemMouseCursors.click,
                               child: Row(
                                 children: [
                                   Text(
                                     'Code: ',
-                                    style: AppTextStyles.bodySecondaryMedium.copyWith(fontSize: 11),
+                                    style: AppTextStyles.bodySecondaryMedium
+                                        .copyWith(fontSize: 11),
                                   ),
                                   Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 10,
+                                      vertical: 4,
+                                    ),
                                     decoration: BoxDecoration(
                                       color: AppColors.white,
                                       borderRadius: BorderRadius.circular(10),
-                                      border: Border.all(color: AppColors.border, width: 1),
+                                      border: Border.all(
+                                        color: AppColors.border,
+                                        width: 1,
+                                      ),
                                     ),
                                     child: Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
                                         Text(
                                           banner['code'] ?? '',
-                                          style: AppTextStyles.bodyMedium.copyWith(
-                                            color: AppColors.primary,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 11,
-                                          ),
+                                          style: AppTextStyles.bodyMedium
+                                              .copyWith(
+                                                color: AppColors.primary,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 11,
+                                              ),
                                         ),
                                         const SizedBox(width: 4),
                                         const Icon(
@@ -174,7 +186,7 @@ class _PromoCarouselState extends State<PromoCarousel> {
           ),
         ),
         const SizedBox(height: 10),
-        
+
         // Page Indicators
         Row(
           mainAxisAlignment: MainAxisAlignment.center,

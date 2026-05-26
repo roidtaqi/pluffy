@@ -9,7 +9,7 @@ import 'product_detail_sheet.dart';
 import '../../../shared/providers/global_providers.dart';
 
 class MenuScreen extends ConsumerStatefulWidget {
-  const MenuScreen({Key? key}) : super(key: key);
+  const MenuScreen({super.key});
 
   @override
   ConsumerState<MenuScreen> createState() => _MenuScreenState();
@@ -29,9 +29,12 @@ class _MenuScreenState extends ConsumerState<MenuScreen> {
   List<Product> _getFilteredProducts(List<Product> products) {
     return products.where((product) {
       final matchesCategory = product.categoryId == _selectedCategoryId;
-      final matchesSearch = product.name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-          product.description.toLowerCase().contains(_searchQuery.toLowerCase());
-      
+      final matchesSearch =
+          product.name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+          product.description.toLowerCase().contains(
+            _searchQuery.toLowerCase(),
+          );
+
       if (_searchQuery.isNotEmpty) {
         return matchesSearch; // Search overrides category for ease of discovery
       }
@@ -46,22 +49,26 @@ class _MenuScreenState extends ConsumerState<MenuScreen> {
     final filteredProducts = _getFilteredProducts(products);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Pluffy Menu'),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: const Text('Menu Pluffy'), centerTitle: true),
       body: Column(
         children: [
           // Search Box Padding
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 20.0,
+              vertical: 8.0,
+            ),
             child: CustomTextField(
               controller: _searchController,
-              hintText: 'Search delicious soufflés, coffee, pastries...',
+              hintText: 'Cari soufflé, kopi, pastry...',
               prefixIcon: Icons.search,
               suffixIcon: _searchQuery.isNotEmpty
                   ? IconButton(
-                      icon: const Icon(Icons.clear, color: AppColors.textSecondary, size: 18),
+                      icon: const Icon(
+                        Icons.clear,
+                        color: AppColors.textSecondary,
+                        size: 18,
+                      ),
                       onPressed: () {
                         setState(() {
                           _searchController.clear();
@@ -77,9 +84,9 @@ class _MenuScreenState extends ConsumerState<MenuScreen> {
               },
             ),
           ),
-          
+
           const SizedBox(height: 12),
-          
+
           // Horizontal Category Tabs
           SizedBox(
             height: 48,
@@ -91,7 +98,8 @@ class _MenuScreenState extends ConsumerState<MenuScreen> {
               separatorBuilder: (context, index) => const SizedBox(width: 10),
               itemBuilder: (context, index) {
                 final category = MockData.categories[index];
-                final isSelected = _selectedCategoryId == category.id && _searchQuery.isEmpty;
+                final isSelected =
+                    _selectedCategoryId == category.id && _searchQuery.isEmpty;
 
                 return GestureDetector(
                   onTap: () {
@@ -107,7 +115,9 @@ class _MenuScreenState extends ConsumerState<MenuScreen> {
                       color: isSelected ? AppColors.primary : AppColors.cardBg,
                       borderRadius: BorderRadius.circular(24),
                       border: Border.all(
-                        color: isSelected ? AppColors.primary : AppColors.border,
+                        color: isSelected
+                            ? AppColors.primary
+                            : AppColors.border,
                         width: 1,
                       ),
                     ),
@@ -122,7 +132,9 @@ class _MenuScreenState extends ConsumerState<MenuScreen> {
                           Text(
                             category.name,
                             style: AppTextStyles.bodyMedium.copyWith(
-                              color: isSelected ? AppColors.white : AppColors.textMain,
+                              color: isSelected
+                                  ? AppColors.white
+                                  : AppColors.textMain,
                               fontWeight: FontWeight.bold,
                               fontSize: 13,
                             ),
@@ -135,9 +147,9 @@ class _MenuScreenState extends ConsumerState<MenuScreen> {
               },
             ),
           ),
-          
+
           const SizedBox(height: 20),
-          
+
           // Catalog Header
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -146,20 +158,22 @@ class _MenuScreenState extends ConsumerState<MenuScreen> {
               children: [
                 Text(
                   _searchQuery.isNotEmpty
-                      ? 'Search Results'
-                      : MockData.categories.firstWhere((c) => c.id == _selectedCategoryId).name,
+                      ? 'Hasil Pencarian'
+                      : MockData.categories
+                            .firstWhere((c) => c.id == _selectedCategoryId)
+                            .name,
                   style: AppTextStyles.h2,
                 ),
                 Text(
-                  '${filteredProducts.length} items',
+                  '${filteredProducts.length} item',
                   style: AppTextStyles.bodySecondaryMedium,
                 ),
               ],
             ),
           ),
-          
+
           const SizedBox(height: 12),
-          
+
           // Staggered Grid of Products
           Expanded(
             child: filteredProducts.isEmpty
@@ -167,28 +181,34 @@ class _MenuScreenState extends ConsumerState<MenuScreen> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(Icons.search_off, size: 64, color: AppColors.border),
-                        const SizedBox(height: 16),
-                        Text(
-                          'No sweet items found',
-                          style: AppTextStyles.h3,
+                        const Icon(
+                          Icons.search_off,
+                          size: 64,
+                          color: AppColors.border,
                         ),
+                        const SizedBox(height: 16),
+                        Text('Menu belum ditemukan', style: AppTextStyles.h3),
                         Text(
-                          'Try searching for another keyword or tab',
+                          'Coba kata kunci atau kategori lain.',
                           style: AppTextStyles.bodySecondary,
                         ),
                       ],
                     ),
                   )
                 : GridView.builder(
-                    padding: const EdgeInsets.only(left: 20, right: 20, bottom: 24),
-                    physics: const BouncingScrollPhysics(),
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      childAspectRatio: 0.72,
-                      crossAxisSpacing: 14,
-                      mainAxisSpacing: 14,
+                    padding: const EdgeInsets.only(
+                      left: 20,
+                      right: 20,
+                      bottom: 24,
                     ),
+                    physics: const BouncingScrollPhysics(),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          childAspectRatio: 0.72,
+                          crossAxisSpacing: 14,
+                          mainAxisSpacing: 14,
+                        ),
                     itemCount: filteredProducts.length,
                     itemBuilder: (context, index) {
                       final product = filteredProducts[index];
@@ -197,9 +217,12 @@ class _MenuScreenState extends ConsumerState<MenuScreen> {
                         child: Container(
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
-                            color: AppColors.cardBg.withOpacity(0.5),
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(color: AppColors.border, width: 1),
+                            color: AppColors.cardBg.withValues(alpha: 0.5),
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(
+                              color: AppColors.border,
+                              width: 1,
+                            ),
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -212,35 +235,55 @@ class _MenuScreenState extends ConsumerState<MenuScreen> {
                                       width: double.infinity,
                                       decoration: BoxDecoration(
                                         color: AppColors.cardBg,
-                                        borderRadius: BorderRadius.circular(14),
+                                        borderRadius: BorderRadius.circular(12),
                                         border: Border.all(
-                                          color: AppColors.border.withOpacity(0.5),
+                                          color: AppColors.border.withValues(
+                                            alpha: 0.5,
+                                          ),
                                           width: 1,
                                         ),
                                       ),
-                                      child: const Center(
-                                        child: Icon(
-                                          Icons.restaurant,
-                                          size: 40,
-                                          color: AppColors.primary,
+                                      child: Center(
+                                        child: Text(
+                                          MockData.categories
+                                              .firstWhere(
+                                                (category) =>
+                                                    category.id ==
+                                                    product.categoryId,
+                                                orElse: () =>
+                                                    MockData.categories.first,
+                                              )
+                                              .emoji,
+                                          style: const TextStyle(fontSize: 34),
                                         ),
                                       ),
                                     ),
-                                    
+
                                     // Rating Tag
                                     Positioned(
                                       top: 8,
                                       left: 8,
                                       child: Container(
-                                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 6,
+                                          vertical: 2,
+                                        ),
                                         decoration: BoxDecoration(
-                                          color: AppColors.white.withOpacity(0.9),
-                                          borderRadius: BorderRadius.circular(6),
+                                          color: AppColors.white.withValues(
+                                            alpha: 0.9,
+                                          ),
+                                          borderRadius: BorderRadius.circular(
+                                            6,
+                                          ),
                                         ),
                                         child: Row(
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
-                                            const Icon(Icons.star, size: 10, color: Colors.amber),
+                                            const Icon(
+                                              Icons.star,
+                                              size: 10,
+                                              color: Colors.amber,
+                                            ),
                                             const SizedBox(width: 2),
                                             Text(
                                               '${product.rating}',
@@ -254,21 +297,27 @@ class _MenuScreenState extends ConsumerState<MenuScreen> {
                                         ),
                                       ),
                                     ),
-                                    
+
                                     // Seasonal tag if applicable
                                     if (product.isSeasonal)
                                       Positioned(
                                         top: 8,
                                         right: 8,
                                         child: Container(
-                                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 6,
+                                            vertical: 2,
+                                          ),
                                           decoration: BoxDecoration(
                                             color: AppColors.accent,
-                                            borderRadius: BorderRadius.circular(6),
+                                            borderRadius: BorderRadius.circular(
+                                              6,
+                                            ),
                                           ),
                                           child: Text(
-                                            'SEASONAL',
-                                            style: AppTextStyles.badgeText.copyWith(fontSize: 8),
+                                            'MUSIMAN',
+                                            style: AppTextStyles.badgeText
+                                                .copyWith(fontSize: 8),
                                           ),
                                         ),
                                       ),
@@ -276,7 +325,7 @@ class _MenuScreenState extends ConsumerState<MenuScreen> {
                                 ),
                               ),
                               const SizedBox(height: 10),
-                              
+
                               // Product details
                               Text(
                                 product.name,
@@ -287,15 +336,19 @@ class _MenuScreenState extends ConsumerState<MenuScreen> {
                               const SizedBox(height: 3),
                               Text(
                                 product.description,
-                                style: AppTextStyles.bodySecondary.copyWith(fontSize: 10, height: 1.2),
+                                style: AppTextStyles.bodySecondary.copyWith(
+                                  fontSize: 10,
+                                  height: 1.2,
+                                ),
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
                               ),
                               const SizedBox(height: 10),
-                              
+
                               // Price and add button
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
                                     formatPrice(product.basePrice),

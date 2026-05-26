@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../../features/outlet/domain/outlet.dart';
 import '../../features/menu/domain/product.dart';
+import '../data/api_config.dart';
 import '../data/mock_data.dart';
 
 // Provider for the currently selected outlet
@@ -66,9 +67,16 @@ class UserProfile {
 class UserProfileNotifier extends StateNotifier<AsyncValue<UserProfile?>> {
   UserProfileNotifier() : super(const AsyncValue.data(null));
 
+  String? _authToken;
+
   UserProfile? get currentUser => state.valueOrNull;
 
   bool get isAuthenticated => currentUser != null;
+
+  Map<String, String> get authHeaders => {
+    'Content-Type': 'application/json',
+    if (_authToken != null) 'Authorization': 'Bearer $_authToken',
+  };
 
   Future<String?> login({
     required String email,
@@ -100,7 +108,7 @@ class UserProfileNotifier extends StateNotifier<AsyncValue<UserProfile?>> {
 
     try {
       final response = await http.post(
-        Uri.parse('http://127.0.0.1:8000/api/$endpoint'),
+        ApiConfig.uri(endpoint),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(payload),
       );
@@ -110,6 +118,8 @@ class UserProfileNotifier extends StateNotifier<AsyncValue<UserProfile?>> {
       if ((response.statusCode == 200 || response.statusCode == 201) &&
           body['success'] == true) {
         final user = UserProfile.fromJson(body['data']);
+        final token = body['token'];
+        _authToken = token is String && token.isNotEmpty ? token : null;
         state = AsyncValue.data(user);
         return null;
       }
@@ -144,8 +154,8 @@ class UserProfileNotifier extends StateNotifier<AsyncValue<UserProfile?>> {
 
     try {
       final response = await http.put(
-        Uri.parse('http://127.0.0.1:8000/api/users/${user.id}'),
-        headers: {'Content-Type': 'application/json'},
+        ApiConfig.uri('users/${user.id}'),
+        headers: authHeaders,
         body: jsonEncode(payload),
       );
 
@@ -172,6 +182,7 @@ class UserProfileNotifier extends StateNotifier<AsyncValue<UserProfile?>> {
   }
 
   void logout() {
+    _authToken = null;
     state = const AsyncValue.data(null);
   }
 
@@ -249,11 +260,7 @@ final inAppNotificationProvider = StateProvider<InAppNotification?>(
 // Provider untuk mengambil produk secara dinamis dari Laravel API
 final productsProvider = FutureProvider<List<Product>>((ref) async {
   try {
-    // Di desktop/linux, http://localhost:8000 dapat diakses langsung.
-    // Jika di Android Emulator, gunakan http://10.0.2.2:8000
-    final response = await http.get(
-      Uri.parse('http://127.0.0.1:8000/api/products'),
-    );
+    final response = await http.get(ApiConfig.uri('products'));
 
     if (response.statusCode == 200) {
       final Map<String, dynamic> body = jsonDecode(response.body);

@@ -11,7 +11,7 @@ class AppTheme {
       brightness: Brightness.light,
       primaryColor: AppColors.primary,
       scaffoldBackgroundColor: AppColors.background,
-      
+
       colorScheme: const ColorScheme.light(
         primary: AppColors.primary,
         secondary: AppColors.accent,
@@ -35,10 +35,7 @@ class AppTheme {
         scrolledUnderElevation: 0,
         centerTitle: true,
         titleTextStyle: AppTextStyles.h2,
-        iconTheme: IconThemeData(
-          color: AppColors.textMain,
-          size: 24,
-        ),
+        iconTheme: IconThemeData(color: AppColors.textMain, size: 24),
       ),
 
       cardTheme: CardThemeData(
@@ -72,7 +69,9 @@ class AppTheme {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
-          textStyle: AppTextStyles.buttonText.copyWith(color: AppColors.primary),
+          textStyle: AppTextStyles.buttonText.copyWith(
+            color: AppColors.primary,
+          ),
         ),
       ),
 
@@ -88,8 +87,11 @@ class AppTheme {
 
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: AppColors.cardBg.withOpacity(0.5),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        fillColor: AppColors.cardBg.withValues(alpha: 0.5),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 16,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
           borderSide: const BorderSide(color: AppColors.border, width: 1),
@@ -114,9 +116,7 @@ class AppTheme {
         backgroundColor: AppColors.background,
         elevation: 10,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(
-            top: Radius.circular(28),
-          ),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
         ),
         clipBehavior: Clip.antiAliasWithSaveLayer,
       ),

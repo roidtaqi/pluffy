@@ -19,7 +19,10 @@ class OrderController extends Controller
      */
     public function index(): JsonResponse
     {
-        $orders = Order::with('items.product')->orderBy('created_at', 'desc')->get();
+        $orders = Order::with('items.product')
+            ->where('user_id', request()->user()->id)
+            ->orderBy('created_at', 'desc')
+            ->get();
 
         $mappedOrders = $orders->map(function ($order) {
             return [
@@ -57,7 +60,7 @@ class OrderController extends Controller
             'outlet_name' => 'required|string',
             'payment_method' => 'required|string',
             'voucher_code' => 'nullable|string',
-            'user_id' => 'required|integer|exists:users,id',
+            'user_id' => 'nullable|integer|exists:users,id',
             'items' => 'required|array|min:1',
             'items.*.product_id' => 'required|integer',
             'items.*.quantity' => 'required|integer|min:1',
@@ -72,7 +75,7 @@ class OrderController extends Controller
             ], 400);
         }
 
-        $userId = $request->input('user_id');
+        $userId = $request->user()->id;
 
         try {
             $order = DB::transaction(function () use ($request, $userId) {
@@ -198,7 +201,7 @@ class OrderController extends Controller
         $orderId = $request->input('id');
         $status = $request->input('status');
 
-        $order = Order::find($orderId);
+        $order = Order::where('user_id', $request->user()->id)->find($orderId);
         if (! $order) {
             return response()->json([
                 'success' => false,

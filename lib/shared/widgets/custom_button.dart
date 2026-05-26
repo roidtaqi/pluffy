@@ -14,7 +14,7 @@ class CustomButton extends StatefulWidget {
   final double borderRadius;
 
   const CustomButton({
-    Key? key,
+    super.key,
     required this.text,
     this.onPressed,
     this.isLoading = false,
@@ -24,13 +24,14 @@ class CustomButton extends StatefulWidget {
     this.width,
     this.height = 54,
     this.borderRadius = 16,
-  }) : super(key: key);
+  });
 
   @override
   State<CustomButton> createState() => _CustomButtonState();
 }
 
-class _CustomButtonState extends State<CustomButton> with SingleTickerProviderStateMixin {
+class _CustomButtonState extends State<CustomButton>
+    with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _scaleAnimation;
 
@@ -77,8 +78,8 @@ class _CustomButtonState extends State<CustomButton> with SingleTickerProviderSt
     final Color bgColor = widget.isSecondary
         ? AppColors.cardBg
         : isEnabled
-            ? AppColors.primary
-            : AppColors.primary.withOpacity(0.5);
+        ? AppColors.primary
+        : AppColors.primary.withValues(alpha: 0.5);
 
     final Color textColor = widget.isSecondary
         ? AppColors.primary
@@ -105,10 +106,10 @@ class _CustomButtonState extends State<CustomButton> with SingleTickerProviderSt
             boxShadow: !widget.isSecondary && isEnabled
                 ? [
                     BoxShadow(
-                      color: AppColors.primary.withOpacity(0.2),
+                      color: AppColors.primary.withValues(alpha: 0.2),
                       blurRadius: 8,
                       offset: const Offset(0, 4),
-                    )
+                    ),
                   ]
                 : null,
           ),
@@ -120,7 +121,9 @@ class _CustomButtonState extends State<CustomButton> with SingleTickerProviderSt
                     child: CircularProgressIndicator(
                       strokeWidth: 2.5,
                       valueColor: AlwaysStoppedAnimation<Color>(
-                        widget.isSecondary ? AppColors.primary : AppColors.white,
+                        widget.isSecondary
+                            ? AppColors.primary
+                            : AppColors.white,
                       ),
                     ),
                   )
@@ -134,7 +137,9 @@ class _CustomButtonState extends State<CustomButton> with SingleTickerProviderSt
                       ],
                       Text(
                         widget.text,
-                        style: AppTextStyles.buttonText.copyWith(color: textColor),
+                        style: AppTextStyles.buttonText.copyWith(
+                          color: textColor,
+                        ),
                       ),
                       if (widget.suffixIcon != null) ...[
                         const SizedBox(width: 8),

@@ -1,11 +1,11 @@
 {
-    "name": "pluffy",
-    "short_name": "pluffy",
+    "name": "Pluffy",
+    "short_name": "Pluffy",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#FBF7F0",
+    "theme_color": "#9B1B1B",
+    "description": "Pluffy ordering app for soufflé, pastry, coffee, and pickup orders.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

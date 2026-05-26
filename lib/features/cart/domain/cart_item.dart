@@ -1,7 +1,8 @@
 import '../../menu/domain/product.dart';
 
 class CartItem {
-  final String id; // Unique cart item ID (in case the same product is added with different customizations)
+  final String
+  id; // Unique cart item ID (in case the same product is added with different customizations)
   final Product product;
   final int quantity;
   final String? selectedSweetness;
@@ -21,7 +22,10 @@ class CartItem {
 
   // Calculate price of the single item with customizations
   double get unitPrice {
-    double addonsTotal = selectedAddons.fold(0.0, (sum, item) => sum + item.price);
+    double addonsTotal = selectedAddons.fold(
+      0.0,
+      (sum, item) => sum + item.price,
+    );
     return product.basePrice + addonsTotal;
   }
 

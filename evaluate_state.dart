@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'dart:convert';
 import 'dart:io';
 
@@ -47,25 +49,26 @@ void main() async {
     }
 
     print("\nEvaluating state in ${repoLib['uri']}...");
-    
+
     // Send JSON-RPC evaluate to the root endpoint
     final evalReq = await client.postUrl(Uri.parse(vmUrl));
     evalReq.headers.contentType = ContentType.json;
-    evalReq.write(jsonEncode({
-      "jsonrpc": "2.0",
-      "method": "evaluate",
-      "params": {
-        "isolateId": isolateId,
-        "targetId": repoLib['id'],
-        "expression": "ordersProvider.toString()"
-      },
-      "id": "eval1"
-    }));
+    evalReq.write(
+      jsonEncode({
+        "jsonrpc": "2.0",
+        "method": "evaluate",
+        "params": {
+          "isolateId": isolateId,
+          "targetId": repoLib['id'],
+          "expression": "ordersProvider.toString()",
+        },
+        "id": "eval1",
+      }),
+    );
 
     final evalRes = await evalReq.close();
     final evalBody = await evalRes.transform(utf8.decoder).join();
     print("Evaluation result:\n$evalBody");
-
   } catch (e) {
     print("Error: $e");
   } finally {

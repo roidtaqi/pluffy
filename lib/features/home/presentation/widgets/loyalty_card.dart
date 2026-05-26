@@ -6,7 +6,7 @@ import '../../../../shared/data/mock_data.dart';
 import '../../../../shared/providers/global_providers.dart';
 
 class LoyaltyCard extends ConsumerWidget {
-  const LoyaltyCard({Key? key}) : super(key: key);
+  const LoyaltyCard({super.key});
 
   void _showMockQrCode(BuildContext context, UserProfile? user, int points) {
     final displayName = user?.name ?? 'Guest';
@@ -137,7 +137,7 @@ class LoyaltyCard extends ConsumerWidget {
         border: Border.all(color: AppColors.border, width: 1.5),
         boxShadow: [
           BoxShadow(
-            color: AppColors.textMain.withOpacity(0.04),
+            color: AppColors.textMain.withValues(alpha: 0.04),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -152,7 +152,7 @@ class LoyaltyCard extends ConsumerWidget {
             child: Icon(
               Icons.stars,
               size: 150,
-              color: AppColors.border.withOpacity(0.2),
+              color: AppColors.border.withValues(alpha: 0.2),
             ),
           ),
 

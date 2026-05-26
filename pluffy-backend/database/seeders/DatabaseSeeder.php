@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
 
 class DatabaseSeeder extends Seeder
 {
@@ -21,7 +22,7 @@ class DatabaseSeeder extends Seeder
             'id' => 1,
             'name' => 'Roid Taqi',
             'email' => 'roidtaqi@pluffy.cafe',
-            'password' => bcrypt('password123'),
+            'password' => bcrypt(env('PLUFFY_DEMO_USER_PASSWORD', Str::password(24))),
             'loyalty_points' => 350,
             'loyalty_stamps' => 4,
             'membership_tier' => 'Gold Member',

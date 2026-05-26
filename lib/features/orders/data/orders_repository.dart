@@ -1,10 +1,10 @@
-// ignore_for_file: avoid_print
-
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../../../shared/providers/global_providers.dart';
+import '../../../shared/data/api_config.dart';
 import '../../cart/domain/cart_item.dart';
 import '../domain/order.dart';
 import 'admin_web_server.dart';
@@ -101,8 +101,7 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
         await _webServer!.start();
         state = state.copyWith(serverPort: _webServer!.port);
       } catch (e) {
-        // Fallback print/log
-        print("Failed to start Pluffy Web Admin Server: $e");
+        debugPrint('Failed to start Pluffy Web Admin Server: $e');
       }
     }
   }
@@ -148,8 +147,8 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
       };
 
       final response = await http.post(
-        Uri.parse('http://127.0.0.1:8000/api/orders'),
-        headers: {'Content-Type': 'application/json'},
+        ApiConfig.uri('orders'),
+        headers: _ref.read(userProfileProvider.notifier).authHeaders,
         body: jsonEncode(payload),
       );
 
@@ -206,7 +205,7 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
         }
       }
     } catch (e) {
-      print("Failed to post order to Laravel backend: $e");
+      debugPrint('Failed to post order to Laravel backend: $e');
     }
 
     // Fallback: local in-memory order placement if server fails
@@ -314,7 +313,8 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
 
     try {
       final response = await http.get(
-        Uri.parse('http://127.0.0.1:8000/api/orders'),
+        ApiConfig.uri('orders'),
+        headers: _ref.read(userProfileProvider.notifier).authHeaders,
       );
       if (response.statusCode != 200) return;
 

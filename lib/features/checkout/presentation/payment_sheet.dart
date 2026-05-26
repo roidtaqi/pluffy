@@ -9,7 +9,7 @@ import '../../cart/data/cart_repository.dart';
 import '../../orders/data/orders_repository.dart';
 
 class PaymentSheet extends ConsumerStatefulWidget {
-  const PaymentSheet({Key? key}) : super(key: key);
+  const PaymentSheet({super.key});
 
   static void show(BuildContext context) {
     showModalBottomSheet(
@@ -36,20 +36,20 @@ class _PaymentSheetState extends ConsumerState<PaymentSheet> {
   final List<Map<String, dynamic>> _paymentMethods = [
     {
       'id': 'wallet',
-      'title': 'Pluffy Pay Wallet',
+      'title': 'Pluffy Pay',
       'subtitle': 'Saldo: Rp 500.000',
       'icon': Icons.account_balance_wallet_outlined,
     },
     {
       'id': 'card',
-      'title': 'Credit/Debit Card',
-      'subtitle': 'Visa ending in 4321',
+      'title': 'Kartu Kredit/Debit',
+      'subtitle': 'Visa berakhiran 4321',
       'icon': Icons.credit_card_outlined,
     },
     {
       'id': 'gpay',
       'title': 'Google Pay',
-      'subtitle': 'Fast & secure checkout',
+      'subtitle': 'Pembayaran cepat dan aman',
       'icon': Icons.payment_outlined,
     },
   ];
@@ -94,6 +94,8 @@ class _PaymentSheetState extends ConsumerState<PaymentSheet> {
           userId: user.id,
         );
 
+    if (!mounted) return;
+
     // 2. Clear active checkout cart
     ref.read(cartProvider.notifier).clear();
 
@@ -129,12 +131,12 @@ class _PaymentSheetState extends ConsumerState<PaymentSheet> {
           const SizedBox(height: 20),
 
           Text(
-            'Payment Method',
+            'Metode Pembayaran',
             style: AppTextStyles.h1.copyWith(color: AppColors.primary),
           ),
           const SizedBox(height: 4),
           Text(
-            'Confirm payment method to place order',
+            'Pilih metode pembayaran untuk membuat pesanan.',
             style: AppTextStyles.bodySecondary,
           ),
 
@@ -176,7 +178,7 @@ class _PaymentSheetState extends ConsumerState<PaymentSheet> {
                           padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
                             color: isSelected
-                                ? AppColors.primary.withOpacity(0.1)
+                                ? AppColors.primary.withValues(alpha: 0.1)
                                 : AppColors.background,
                             shape: BoxShape.circle,
                           ),
@@ -243,8 +245,8 @@ class _PaymentSheetState extends ConsumerState<PaymentSheet> {
                 const SizedBox(height: 16),
                 CustomButton(
                   text: _isPaying
-                      ? 'Authorizing...'
-                      : 'Pay Now — ${formatPrice(cart.total)}',
+                      ? 'Memproses...'
+                      : 'Bayar Sekarang - ${formatPrice(cart.total)}',
                   isLoading: _isPaying,
                   onPressed: _isPaying ? null : _processPayment,
                 ),

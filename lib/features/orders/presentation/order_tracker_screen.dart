@@ -16,10 +16,9 @@ class OrderTrackerScreen extends ConsumerWidget {
     final activeOrder = ordersState.activeOrder;
 
     // Fallback in case activeOrder is completed or empty (e.g. testing completed order)
-    final order = activeOrder ??
-        (ordersState.orders.isNotEmpty
-            ? ordersState.orders.first
-            : null);
+    final order =
+        activeOrder ??
+        (ordersState.orders.isNotEmpty ? ordersState.orders.first : null);
 
     if (order == null) {
       return Scaffold(
@@ -30,7 +29,11 @@ class OrderTrackerScreen extends ConsumerWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(Icons.receipt_long_outlined, size: 64, color: AppColors.border),
+                const Icon(
+                  Icons.receipt_long_outlined,
+                  size: 64,
+                  color: AppColors.border,
+                ),
                 const SizedBox(height: 16),
                 Text('No order found to track', style: AppTextStyles.h3),
                 const SizedBox(height: 24),
@@ -61,12 +64,14 @@ class OrderTrackerScreen extends ConsumerWidget {
       },
       {
         'title': 'Ready at Counter',
-        'desc': 'Your warm desserts are ready! Please present your ID ${order.id} at the counter.',
+        'desc':
+            'Your warm desserts are ready! Please present your ID ${order.id} at the counter.',
         'time': currentStatusIndex >= 2 ? 'Ready' : 'Pending',
       },
       {
         'title': 'Completed',
-        'desc': 'Enjoy your premium dessert! Don\'t forget to stamp your loyalty card.',
+        'desc':
+            'Enjoy your premium dessert! Don\'t forget to stamp your loyalty card.',
         'time': currentStatusIndex >= 3 ? 'Enjoyed' : 'Pending',
       },
     ];
@@ -108,7 +113,11 @@ class OrderTrackerScreen extends ConsumerWidget {
                         color: AppColors.primary,
                         shape: BoxShape.circle,
                       ),
-                      child: const Icon(Icons.delivery_dining, color: Colors.white, size: 28),
+                      child: const Icon(
+                        Icons.delivery_dining,
+                        color: Colors.white,
+                        size: 28,
+                      ),
                     ),
                     const SizedBox(width: 16),
                     Expanded(
@@ -117,12 +126,16 @@ class OrderTrackerScreen extends ConsumerWidget {
                         children: [
                           Text(
                             'Order ID: ${order.id}',
-                            style: AppTextStyles.h3.copyWith(color: AppColors.primary),
+                            style: AppTextStyles.h3.copyWith(
+                              color: AppColors.primary,
+                            ),
                           ),
                           const SizedBox(height: 2),
                           Text(
                             'Pickup location: ${order.outletName}',
-                            style: AppTextStyles.bodySecondaryMedium.copyWith(fontSize: 11),
+                            style: AppTextStyles.bodySecondaryMedium.copyWith(
+                              fontSize: 11,
+                            ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -132,14 +145,18 @@ class OrderTrackerScreen extends ConsumerWidget {
                   ],
                 ),
               ),
-              
+
               const SizedBox(height: 28),
-              
+
               Text('Live Status Tracker', style: AppTextStyles.h2),
               const SizedBox(height: 6),
               Row(
                 children: [
-                  const Icon(Icons.info_outline, size: 12, color: AppColors.success),
+                  const Icon(
+                    Icons.info_outline,
+                    size: 12,
+                    color: AppColors.success,
+                  ),
                   const SizedBox(width: 4),
                   Text(
                     'Kitchen status updates automatically from the admin board.',
@@ -150,9 +167,9 @@ class OrderTrackerScreen extends ConsumerWidget {
                   ),
                 ],
               ),
-              
+
               const SizedBox(height: 20),
-              
+
               // Vertical Stepper Timeline
               ListView.builder(
                 shrinkWrap: true,
@@ -173,7 +190,10 @@ class OrderTrackerScreen extends ConsumerWidget {
                           children: [
                             // Glowing or pulsing node
                             TweenAnimationBuilder<double>(
-                              tween: Tween<double>(begin: 0.9, end: isActive ? 1.1 : 1.0),
+                              tween: Tween<double>(
+                                begin: 0.9,
+                                end: isActive ? 1.1 : 1.0,
+                              ),
                               duration: const Duration(seconds: 1),
                               curve: Curves.easeInOut,
                               builder: (context, scale, child) {
@@ -183,19 +203,24 @@ class OrderTrackerScreen extends ConsumerWidget {
                                     width: 24,
                                     height: 24,
                                     decoration: BoxDecoration(
-                                      color: isDone ? AppColors.primary : AppColors.background,
+                                      color: isDone
+                                          ? AppColors.primary
+                                          : AppColors.background,
                                       shape: BoxShape.circle,
                                       border: Border.all(
-                                        color: isDone ? AppColors.primary : AppColors.border,
+                                        color: isDone
+                                            ? AppColors.primary
+                                            : AppColors.border,
                                         width: 2,
                                       ),
                                       boxShadow: isActive
                                           ? [
                                               BoxShadow(
-                                                color: AppColors.primary.withValues(alpha: 0.3),
+                                                color: AppColors.primary
+                                                    .withValues(alpha: 0.3),
                                                 blurRadius: 6,
                                                 spreadRadius: 2,
-                                              )
+                                              ),
                                             ]
                                           : null,
                                     ),
@@ -212,20 +237,22 @@ class OrderTrackerScreen extends ConsumerWidget {
                                 );
                               },
                             ),
-                            
+
                             // Line connecting nodes
                             if (!isLast)
                               Expanded(
                                 child: Container(
                                   width: 2,
-                                  color: index < currentStatusIndex ? AppColors.primary : AppColors.border,
+                                  color: index < currentStatusIndex
+                                      ? AppColors.primary
+                                      : AppColors.border,
                                 ),
                               ),
                           ],
                         ),
-                        
+
                         const SizedBox(width: 16),
-                        
+
                         // Stepper Description Right
                         Expanded(
                           child: Padding(
@@ -234,26 +261,34 @@ class OrderTrackerScreen extends ConsumerWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
                                       step['title']!,
                                       style: AppTextStyles.h3.copyWith(
-                                        color: isDone ? AppColors.textMain : AppColors.textSecondary,
-                                        fontWeight: isDone ? FontWeight.bold : FontWeight.normal,
+                                        color: isDone
+                                            ? AppColors.textMain
+                                            : AppColors.textSecondary,
+                                        fontWeight: isDone
+                                            ? FontWeight.bold
+                                            : FontWeight.normal,
                                       ),
                                     ),
                                     Text(
                                       step['time']!,
-                                      style: AppTextStyles.bodySecondary.copyWith(
-                                        fontSize: 10,
-                                        color: isActive
-                                            ? AppColors.primary
-                                            : isDone
+                                      style: AppTextStyles.bodySecondary
+                                          .copyWith(
+                                            fontSize: 10,
+                                            color: isActive
+                                                ? AppColors.primary
+                                                : isDone
                                                 ? AppColors.success
                                                 : AppColors.textSecondary,
-                                        fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
-                                      ),
+                                            fontWeight: isActive
+                                                ? FontWeight.bold
+                                                : FontWeight.normal,
+                                          ),
                                     ),
                                   ],
                                 ),
@@ -262,7 +297,11 @@ class OrderTrackerScreen extends ConsumerWidget {
                                   step['desc']!,
                                   style: AppTextStyles.bodySecondary.copyWith(
                                     fontSize: 12,
-                                    color: isDone ? AppColors.textMain.withValues(alpha: 0.8) : AppColors.textSecondary,
+                                    color: isDone
+                                        ? AppColors.textMain.withValues(
+                                            alpha: 0.8,
+                                          )
+                                        : AppColors.textSecondary,
                                   ),
                                 ),
                               ],
@@ -274,9 +313,9 @@ class OrderTrackerScreen extends ConsumerWidget {
                   );
                 },
               ),
-              
+
               const Divider(height: 24),
-              
+
               // Summary details
               if (order.items.isNotEmpty) ...[
                 Text('Items Ordered', style: AppTextStyles.h2),
@@ -292,7 +331,8 @@ class OrderTrackerScreen extends ConsumerWidget {
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: order.items.length,
-                    separatorBuilder: (context, index) => const Divider(height: 16),
+                    separatorBuilder: (context, index) =>
+                        const Divider(height: 16),
                     itemBuilder: (context, index) {
                       final item = order.items[index];
                       return Row(
@@ -304,7 +344,9 @@ class OrderTrackerScreen extends ConsumerWidget {
                           ),
                           Text(
                             formatPrice(item.totalPrice),
-                            style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold),
+                            style: AppTextStyles.bodyMedium.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ],
                       );
@@ -313,7 +355,7 @@ class OrderTrackerScreen extends ConsumerWidget {
                 ),
                 const SizedBox(height: 28),
               ],
-              
+
               CustomButton(
                 text: 'Done',
                 onPressed: () {

@@ -1,17 +1,16 @@
+import 'package:flutter/foundation.dart';
+
 import 'orders_repository.dart';
 
 class AdminWebServer {
   final OrdersNotifier notifier;
   final int port;
 
-  AdminWebServer({
-    required this.notifier,
-    required this.port,
-  });
+  AdminWebServer({required this.notifier, required this.port});
 
   Future<void> start() async {
     // No-op or log on web platforms
-    print("Admin Web Server is disabled on Flutter Web platform.");
+    debugPrint('Admin Web Server is disabled on Flutter Web platform.');
   }
 
   void stop() {

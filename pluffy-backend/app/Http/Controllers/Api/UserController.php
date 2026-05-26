@@ -32,6 +32,7 @@ class UserController extends Controller
             'success' => true,
             'message' => 'Registration successful',
             'data' => $this->mapUser($user),
+            'token' => $user->createToken('pluffy-customer')->plainTextToken,
         ], 201);
     }
 
@@ -55,6 +56,7 @@ class UserController extends Controller
             'success' => true,
             'message' => 'Login successful',
             'data' => $this->mapUser($user),
+            'token' => $user->createToken('pluffy-customer')->plainTextToken,
         ]);
     }
 
@@ -64,6 +66,13 @@ class UserController extends Controller
     public function show(int $id): JsonResponse
     {
         $user = User::find($id);
+
+        if (request()->user()?->id !== $id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'You can only access your own profile',
+            ], 403);
+        }
 
         if (! $user) {
             return response()->json([
@@ -82,6 +91,13 @@ class UserController extends Controller
     public function update(Request $request, int $id): JsonResponse
     {
         $user = User::find($id);
+
+        if ($request->user()?->id !== $id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'You can only update your own profile',
+            ], 403);
+        }
 
         if (! $user) {
             return response()->json([

@@ -221,10 +221,7 @@ class ProfileScreen extends ConsumerWidget {
               ),
               const SizedBox(width: 12),
               Expanded(
-                child: Text(
-                  'Logout dari akun?',
-                  style: AppTextStyles.h3,
-                ),
+                child: Text('Logout dari akun?', style: AppTextStyles.h3),
               ),
             ],
           ),

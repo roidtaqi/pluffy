@@ -91,6 +91,10 @@
             justify-content: flex-end;
         }
 
+        .logout-form {
+            margin: 0;
+        }
+
         .tabs {
             display: inline-grid;
             grid-template-columns: 1fr 1fr;
@@ -141,6 +145,19 @@
             height: 8px;
             border-radius: 50%;
             background: var(--completed);
+        }
+
+        .logout-button {
+            min-height: 36px;
+            padding: 8px 12px;
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            background: var(--surface);
+            color: var(--muted);
+            font: inherit;
+            font-size: 12px;
+            font-weight: 800;
+            cursor: pointer;
         }
 
         body:has(#products:target) .orders-panel,
@@ -605,6 +622,10 @@
             </div>
             <a class="refresh" href="{{ route('admin.orders.index') }}">Refresh</a>
             <div class="pill"><span class="dot"></span>Orders refresh 5s</div>
+            <form class="logout-form" method="POST" action="{{ route('admin.logout') }}">
+                @csrf
+                <button class="logout-button" type="submit">Logout</button>
+            </form>
         </div>
     </header>
 

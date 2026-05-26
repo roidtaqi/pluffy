@@ -6,13 +6,18 @@ use App\Http\Controllers\Api\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/products', [ProductController::class, 'index']);
-Route::put('/products/{id}', [ProductController::class, 'update']);
 
-Route::post('/register', [UserController::class, 'register']);
-Route::post('/login', [UserController::class, 'login']);
-Route::get('/users/{id}', [UserController::class, 'show']);
-Route::put('/users/{id}', [UserController::class, 'update']);
+Route::post('/register', [UserController::class, 'register'])
+    ->middleware('throttle:10,1');
+Route::post('/login', [UserController::class, 'login'])
+    ->middleware('throttle:10,1');
 
-Route::get('/orders', [OrderController::class, 'index']);
-Route::post('/orders', [OrderController::class, 'store']);
-Route::post('/orders/update', [OrderController::class, 'updateStatus']);
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/users/{id}', [UserController::class, 'show']);
+    Route::put('/users/{id}', [UserController::class, 'update']);
+
+    Route::get('/orders', [OrderController::class, 'index'])
+        ->middleware('throttle:60,1');
+    Route::post('/orders', [OrderController::class, 'store'])
+        ->middleware('throttle:30,1');
+});

@@ -13,7 +13,7 @@ import 'widgets/loyalty_card.dart';
 import 'widgets/promo_carousel.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+  const HomeScreen({super.key});
 
   @override
   ConsumerState<HomeScreen> createState() => _HomeScreenState();
@@ -62,6 +62,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final popularProducts = products.where((p) => p.isPopular).toList();
     final user = ref.watch(userProfileProvider).valueOrNull;
     final firstName = user?.name.split(' ').first ?? 'Guest';
+    final initial = firstName.isNotEmpty ? firstName[0].toUpperCase() : 'P';
 
     return Scaffold(
       appBar: AppBar(
@@ -95,7 +96,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         actions: [
           IconButton(
             onPressed: () {
-              // Open simple notification popup or route to profile
               context.go('/profile');
             },
             icon: const Icon(Icons.notifications_outlined),
@@ -126,7 +126,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        'Craving some fluffy soufflés today? 🥞',
+                        'Mau pesan yang lembut hari ini?',
                         style: AppTextStyles.bodySecondaryMedium,
                       ),
                     ],
@@ -136,12 +136,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     height: 50,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
+                      color: AppColors.primary,
                       border: Border.all(color: AppColors.border, width: 2),
-                      image: const DecorationImage(
-                        image: NetworkImage(
-                          'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150', // Premium mock avatar
-                        ),
-                        fit: BoxFit.cover,
+                    ),
+                    alignment: Alignment.center,
+                    child: Text(
+                      initial,
+                      style: AppTextStyles.h2.copyWith(
+                        color: AppColors.white,
+                        fontWeight: FontWeight.w800,
                       ),
                     ),
                   ),
@@ -159,12 +162,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('Special Offers', style: AppTextStyles.h2),
+                  Text('Promo Hari Ini', style: AppTextStyles.h2),
                   TextButton(
                     onPressed: () {
                       context.go('/profile'); // Vouchers list is in Profile
                     },
-                    child: const Text('See All'),
+                    child: const Text('Lihat Semua'),
                   ),
                 ],
               ),
@@ -177,12 +180,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('Popular Items', style: AppTextStyles.h2),
+                  Text('Menu Favorit', style: AppTextStyles.h2),
                   TextButton(
                     onPressed: () {
                       context.go('/menu');
                     },
-                    child: const Text('View Menu'),
+                    child: const Text('Buka Menu'),
                   ),
                 ],
               ),
@@ -204,7 +207,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         width: 150,
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: AppColors.cardBg.withOpacity(0.5),
+                          color: AppColors.cardBg.withValues(alpha: 0.5),
                           borderRadius: BorderRadius.circular(20),
                           border: Border.all(
                             color: AppColors.border,
@@ -222,7 +225,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                   color: AppColors.cardBg,
                                   borderRadius: BorderRadius.circular(14),
                                   border: Border.all(
-                                    color: AppColors.border.withOpacity(0.5),
+                                    color: AppColors.border.withValues(
+                                      alpha: 0.5,
+                                    ),
                                     width: 1,
                                   ),
                                 ),

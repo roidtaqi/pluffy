@@ -8,10 +8,7 @@ import '../../features/cart/data/cart_repository.dart';
 class NavigationShell extends ConsumerWidget {
   final Widget child;
 
-  const NavigationShell({
-    Key? key,
-    required this.child,
-  }) : super(key: key);
+  const NavigationShell({super.key, required this.child});
 
   int _calculateSelectedIndex(BuildContext context) {
     final String location = GoRouterState.of(context).uri.toString();
@@ -47,7 +44,10 @@ class NavigationShell extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final int selectedIndex = _calculateSelectedIndex(context);
     final cartState = ref.watch(cartProvider);
-    final int cartItemsCount = cartState.items.fold(0, (sum, item) => sum + item.quantity);
+    final int cartItemsCount = cartState.items.fold(
+      0,
+      (sum, item) => sum + item.quantity,
+    );
 
     return Scaffold(
       body: child,
@@ -59,10 +59,10 @@ class NavigationShell extends ConsumerWidget {
           ),
           boxShadow: [
             BoxShadow(
-              color: AppColors.textMain.withOpacity(0.04),
+              color: AppColors.textMain.withValues(alpha: 0.04),
               blurRadius: 10,
               offset: const Offset(0, -4),
-            )
+            ),
           ],
         ),
         child: SafeArea(
@@ -91,7 +91,10 @@ class NavigationShell extends ConsumerWidget {
                 ),
                 const BottomNavigationBarItem(
                   icon: Icon(Icons.restaurant_menu_outlined),
-                  activeIcon: Icon(Icons.restaurant_menu, color: AppColors.primary),
+                  activeIcon: Icon(
+                    Icons.restaurant_menu,
+                    color: AppColors.primary,
+                  ),
                   label: 'Menu',
                 ),
                 BottomNavigationBarItem(
@@ -161,7 +164,10 @@ class NavigationShell extends ConsumerWidget {
                 ),
                 const BottomNavigationBarItem(
                   icon: Icon(Icons.receipt_long_outlined),
-                  activeIcon: Icon(Icons.receipt_long, color: AppColors.primary),
+                  activeIcon: Icon(
+                    Icons.receipt_long,
+                    color: AppColors.primary,
+                  ),
                   label: 'Orders',
                 ),
                 const BottomNavigationBarItem(

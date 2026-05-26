@@ -10,7 +10,7 @@ import '../../../shared/widgets/custom_text_field.dart';
 class AuthScreen extends ConsumerStatefulWidget {
   final String redirectPath;
 
-  const AuthScreen({Key? key, this.redirectPath = '/home'}) : super(key: key);
+  const AuthScreen({super.key, this.redirectPath = '/home'});
 
   @override
   ConsumerState<AuthScreen> createState() => _AuthScreenState();
@@ -186,10 +186,10 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                       Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: AppColors.error.withOpacity(0.08),
+                          color: AppColors.error.withValues(alpha: 0.08),
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
-                            color: AppColors.error.withOpacity(0.3),
+                            color: AppColors.error.withValues(alpha: 0.3),
                           ),
                         ),
                         child: Text(

@@ -2,10 +2,7 @@ class CustomizationAddon {
   final String name;
   final double price;
 
-  const CustomizationAddon({
-    required this.name,
-    required this.price,
-  });
+  const CustomizationAddon({required this.name, required this.price});
 
   @override
   bool operator ==(Object other) =>
@@ -28,8 +25,9 @@ class Product {
   final double rating;
   final bool isSeasonal;
   final bool isPopular;
-  final List<String>? availableSweetness; // e.g., ['0%', '25%', '50%', '75%', '100%']
-  final List<String>? availableIce;       // e.g., ['None', 'Less', 'Normal']
+  final List<String>?
+  availableSweetness; // e.g., ['0%', '25%', '50%', '75%', '100%']
+  final List<String>? availableIce; // e.g., ['None', 'Less', 'Normal']
   final List<String>? availableTemperature; // e.g., ['Hot', 'Iced']
   final List<CustomizationAddon> availableAddons;
   final int stock;

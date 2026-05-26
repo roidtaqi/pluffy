@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import '../../admin/data/admin_web_content.dart';
 import '../domain/order.dart';
@@ -11,20 +12,25 @@ class AdminWebServer {
   final int port;
   HttpServer? _server;
 
-  AdminWebServer({
-    required this.notifier,
-    required this.port,
-  });
+  AdminWebServer({required this.notifier, required this.port});
 
   Future<void> start() async {
     _server = await HttpServer.bind(InternetAddress.loopbackIPv4, port);
-    print("Pluffy Admin Web Server running on http://localhost:$port/admin");
+    debugPrint(
+      'Pluffy Admin Web Server running on http://localhost:$port/admin',
+    );
 
     _server!.listen((HttpRequest request) async {
       // Handle CORS Preflight (OPTIONS)
       request.response.headers.add('Access-Control-Allow-Origin', '*');
-      request.response.headers.add('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-      request.response.headers.add('Access-Control-Allow-Headers', 'Content-Type');
+      request.response.headers.add(
+        'Access-Control-Allow-Methods',
+        'GET, POST, OPTIONS',
+      );
+      request.response.headers.add(
+        'Access-Control-Allow-Headers',
+        'Content-Type',
+      );
 
       if (request.method == 'OPTIONS') {
         request.response.statusCode = HttpStatus.ok;
@@ -72,14 +78,17 @@ class AdminWebServer {
         } else if (uri == '/api/simulation') {
           // Get current simulation state
           request.response.headers.contentType = ContentType.json;
-          request.response.write(jsonEncode({'autoSimulate': notifier.currentState.autoSimulate}));
+          request.response.write(
+            jsonEncode({'autoSimulate': notifier.currentState.autoSimulate}),
+          );
           await request.response.close();
-        } else if (uri == '/api/simulation/toggle' && request.method == 'POST') {
+        } else if (uri == '/api/simulation/toggle' &&
+            request.method == 'POST') {
           // Toggle simulation state
           final body = await utf8.decoder.bind(request).join();
           final data = jsonDecode(body);
           final bool autoSim = data['autoSimulate'] ?? true;
-          
+
           notifier.toggleAutoSimulate(autoSim);
 
           request.response.headers.contentType = ContentType.json;
@@ -116,7 +125,7 @@ class AdminWebServer {
           await request.response.close();
         }
       } catch (e) {
-        print("Error serving HTTP request: $e");
+        debugPrint('Error serving HTTP request: $e');
         try {
           request.response.statusCode = HttpStatus.internalServerError;
           request.response.write(jsonEncode({'error': e.toString()}));

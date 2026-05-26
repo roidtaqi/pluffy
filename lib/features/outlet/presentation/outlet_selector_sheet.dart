@@ -6,7 +6,7 @@ import '../../../shared/data/mock_data.dart';
 import '../../../shared/providers/global_providers.dart';
 
 class OutletSelectorSheet extends ConsumerWidget {
-  const OutletSelectorSheet({Key? key}) : super(key: key);
+  const OutletSelectorSheet({super.key});
 
   static void show(BuildContext context) {
     showModalBottomSheet(
@@ -42,7 +42,7 @@ class OutletSelectorSheet extends ConsumerWidget {
             ),
           ),
           const SizedBox(height: 20),
-          
+
           Text(
             'Select Outlet',
             style: AppTextStyles.h1.copyWith(color: AppColors.primary),
@@ -53,7 +53,7 @@ class OutletSelectorSheet extends ConsumerWidget {
             style: AppTextStyles.bodySecondary,
           ),
           const SizedBox(height: 20),
-          
+
           Expanded(
             child: ListView.separated(
               itemCount: MockData.outlets.length,
@@ -66,7 +66,7 @@ class OutletSelectorSheet extends ConsumerWidget {
                   onTap: () {
                     ref.read(activeOutletProvider.notifier).state = outlet;
                     Navigator.pop(context);
-                    
+
                     // Simple snackbar
                     ScaffoldMessenger.of(context).clearSnackBars();
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -87,15 +87,19 @@ class OutletSelectorSheet extends ConsumerWidget {
                       color: isSelected ? AppColors.cardBg : AppColors.white,
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(
-                        color: isSelected ? AppColors.primary : AppColors.border,
+                        color: isSelected
+                            ? AppColors.primary
+                            : AppColors.border,
                         width: isSelected ? 1.8 : 1.0,
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: AppColors.textMain.withOpacity(isSelected ? 0.04 : 0.01),
+                          color: AppColors.textMain.withValues(
+                            alpha: isSelected ? 0.04 : 0.01,
+                          ),
                           blurRadius: 8,
                           offset: const Offset(0, 4),
-                        )
+                        ),
                       ],
                     ),
                     child: Row(
@@ -110,13 +114,17 @@ class OutletSelectorSheet extends ConsumerWidget {
                                   Icon(
                                     Icons.storefront,
                                     size: 18,
-                                    color: isSelected ? AppColors.primary : AppColors.textSecondary,
+                                    color: isSelected
+                                        ? AppColors.primary
+                                        : AppColors.textSecondary,
                                   ),
                                   const SizedBox(width: 6),
                                   Text(
                                     outlet.name,
                                     style: AppTextStyles.h3.copyWith(
-                                      color: isSelected ? AppColors.primary : AppColors.textMain,
+                                      color: isSelected
+                                          ? AppColors.primary
+                                          : AppColors.textMain,
                                     ),
                                   ),
                                 ],
@@ -124,38 +132,55 @@ class OutletSelectorSheet extends ConsumerWidget {
                               const SizedBox(height: 8),
                               Text(
                                 outlet.address,
-                                style: AppTextStyles.bodySecondary.copyWith(fontSize: 12),
+                                style: AppTextStyles.bodySecondary.copyWith(
+                                  fontSize: 12,
+                                ),
                               ),
                               const SizedBox(height: 8),
                               Row(
                                 children: [
-                                  const Icon(Icons.access_time, size: 12, color: AppColors.textSecondary),
+                                  const Icon(
+                                    Icons.access_time,
+                                    size: 12,
+                                    color: AppColors.textSecondary,
+                                  ),
                                   const SizedBox(width: 4),
                                   Text(
                                     outlet.operatingHours,
-                                    style: AppTextStyles.bodySecondary.copyWith(fontSize: 11),
+                                    style: AppTextStyles.bodySecondary.copyWith(
+                                      fontSize: 11,
+                                    ),
                                   ),
                                   const SizedBox(width: 12),
-                                  const Icon(Icons.phone, size: 12, color: AppColors.textSecondary),
+                                  const Icon(
+                                    Icons.phone,
+                                    size: 12,
+                                    color: AppColors.textSecondary,
+                                  ),
                                   const SizedBox(width: 4),
                                   Text(
                                     outlet.phone,
-                                    style: AppTextStyles.bodySecondary.copyWith(fontSize: 11),
+                                    style: AppTextStyles.bodySecondary.copyWith(
+                                      fontSize: 11,
+                                    ),
                                   ),
                                 ],
                               ),
                             ],
                           ),
                         ),
-                        
+
                         // Right checkmark & distance
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 6,
+                                vertical: 2,
+                              ),
                               decoration: BoxDecoration(
-                                color: AppColors.accent.withOpacity(0.2),
+                                color: AppColors.accent.withValues(alpha: 0.2),
                                 borderRadius: BorderRadius.circular(6),
                               ),
                               child: Text(

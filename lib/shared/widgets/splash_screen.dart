@@ -6,7 +6,7 @@ import '../../app/theme/app_text_styles.dart';
 import '../providers/global_providers.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
-  const SplashScreen({Key? key}) : super(key: key);
+  const SplashScreen({super.key});
 
   @override
   ConsumerState<SplashScreen> createState() => _SplashScreenState();
@@ -77,7 +77,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
               height: 300,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: AppColors.cardBg.withOpacity(0.4),
+                color: AppColors.cardBg.withValues(alpha: 0.4),
               ),
             ),
           ),
@@ -89,7 +89,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
               height: 250,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: AppColors.accent.withOpacity(0.15),
+                color: AppColors.accent.withValues(alpha: 0.15),
               ),
             ),
           ),
@@ -109,7 +109,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                       border: Border.all(color: AppColors.border, width: 2),
                       boxShadow: [
                         BoxShadow(
-                          color: AppColors.textMain.withOpacity(0.06),
+                          color: AppColors.textMain.withValues(alpha: 0.06),
                           blurRadius: 16,
                           offset: const Offset(0, 8),
                         ),
@@ -141,7 +141,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                       Text(
                         'Premium Pastry - Pâtissier',
                         style: AppTextStyles.bodySecondaryMedium.copyWith(
-                          color: AppColors.primary.withOpacity(0.8),
+                          color: AppColors.primary.withValues(alpha: 0.8),
                           letterSpacing: 1.0,
                         ),
                       ),
