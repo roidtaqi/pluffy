@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../features/home/presentation/home_screen.dart';
 import '../../features/auth/presentation/auth_screen.dart';
+import '../../features/auth/presentation/forgot_password_screen.dart';
 import '../../features/menu/presentation/menu_screen.dart';
 import '../../features/cart/presentation/cart_screen.dart';
 import '../../features/orders/presentation/orders_screen.dart';
@@ -29,6 +30,14 @@ final goRouter = GoRouter(
       builder: (context, state) {
         final redirectPath = state.uri.queryParameters['redirect'] ?? '/home';
         return AuthScreen(redirectPath: redirectPath);
+      },
+    ),
+    GoRoute(
+      path: '/forgot-password',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) {
+        final email = state.uri.queryParameters['email'] ?? '';
+        return ForgotPasswordScreen(initialEmail: email);
       },
     ),
     ShellRoute(

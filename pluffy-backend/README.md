@@ -57,10 +57,18 @@ APP_URL
 PLUFFY_FRONTEND_URLS
 PLUFFY_ADMIN_EMAIL
 PLUFFY_ADMIN_PASSWORD
+MAIL_HOST
+MAIL_USERNAME
+MAIL_PASSWORD
 ```
 
 Gunakan nilai `PLUFFY_ADMIN_EMAIL` dan `PLUFFY_ADMIN_PASSWORD` tersebut untuk
 login ke portal `/admin`. Jangan menyertakan tanda kutip pada nilai variable.
+
+Fitur lupa password mengirim kode verifikasi melalui SMTP. Isi `MAIL_HOST`,
+`MAIL_PORT`, `MAIL_USERNAME`, `MAIL_PASSWORD`, dan `MAIL_FROM_ADDRESS` dengan
+akun email transaksional milik Pluffy. Gunakan `MAIL_MAILER=log` hanya untuk
+pengembangan lokal.
 
 Buat `APP_KEY` dengan:
 

@@ -181,6 +181,27 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                         ),
                       ),
                     ),
+                    if (!_isRegisterMode)
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: TextButton(
+                          onPressed: isLoading
+                              ? null
+                              : () {
+                                  final email = Uri.encodeQueryComponent(
+                                    _emailController.text.trim(),
+                                  );
+                                  context.push('/forgot-password?email=$email');
+                                },
+                          child: Text(
+                            'Lupa Password?',
+                            style: AppTextStyles.bodyMedium.copyWith(
+                              color: AppColors.primary,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
                     if (_errorMessage != null) ...[
                       const SizedBox(height: 14),
                       Container(
