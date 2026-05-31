@@ -31,6 +31,29 @@ class AdminPortalTest extends TestCase
         ])->assertRedirect('/admin');
     }
 
+    public function test_admin_portal_uses_forwarded_https_scheme_behind_proxy(): void
+    {
+        $response = $this->withHeader('X-Forwarded-Proto', 'https')
+            ->get('/admin');
+
+        $response->assertRedirect();
+        $this->assertStringStartsWith('https://', $response->headers->get('Location'));
+        $this->assertStringEndsWith('/admin/login', $response->headers->get('Location'));
+    }
+
+    public function test_admin_portal_explains_incorrect_credentials_in_indonesian(): void
+    {
+        $this->from('/admin/login')
+            ->post('/admin/login', [
+                'email' => 'admin@pluffy.cafe',
+                'password' => 'incorrect-password',
+            ])
+            ->assertRedirect('/admin/login')
+            ->assertSessionHasErrors([
+                'email' => 'Email atau password admin tidak sesuai.',
+            ]);
+    }
+
     public function test_admin_portal_lists_orders_and_updates_status(): void
     {
         $user = User::create([

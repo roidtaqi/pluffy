@@ -24,7 +24,7 @@ php artisan serve --host=0.0.0.0 --port=8000
 ## Deployment Publik Dengan Railway
 
 Railway dapat mendeteksi Laravel melalui Railpack dan menjalankannya dengan
-PHP-FPM serta Caddy. Pluffy menyediakan `railway.json` untuk menjalankan
+FrankenPHP serta Caddy. Pluffy menyediakan `railway.json` untuk menjalankan
 migrasi database sebelum deploy dan memeriksa endpoint `/up` sebelum versi baru
 diaktifkan.
 
@@ -55,8 +55,12 @@ berikut dengan nilai asli:
 APP_KEY
 APP_URL
 PLUFFY_FRONTEND_URLS
+PLUFFY_ADMIN_EMAIL
 PLUFFY_ADMIN_PASSWORD
 ```
+
+Gunakan nilai `PLUFFY_ADMIN_EMAIL` dan `PLUFFY_ADMIN_PASSWORD` tersebut untuk
+login ke portal `/admin`. Jangan menyertakan tanda kutip pada nilai variable.
 
 Buat `APP_KEY` dengan:
 
@@ -77,6 +81,14 @@ https://pluffy-backend-production.up.railway.app
 ```
 
 Gunakan domain tersebut untuk `APP_URL`.
+
+Biarkan Railway menyediakan variable `PORT` secara otomatis. Railpack akan
+menjalankan Caddy pada nilai tersebut dan Railway dapat mendeteksi target port
+domain. URL publik tetap ditulis tanpa port, misalnya:
+
+```text
+https://pluffy-backend-production.up.railway.app/up
+```
 
 ### 5. Isi Produk Awal
 

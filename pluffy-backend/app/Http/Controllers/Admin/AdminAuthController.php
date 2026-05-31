@@ -18,7 +18,7 @@ class AdminAuthController extends Controller
     {
         if (! config('pluffy_admin.email') || ! config('pluffy_admin.password')) {
             return back()
-                ->withErrors(['email' => 'Admin login is not configured.'])
+                ->withErrors(['email' => 'Login admin belum dikonfigurasi.'])
                 ->onlyInput('email');
         }
 
@@ -32,7 +32,7 @@ class AdminAuthController extends Controller
             ! hash_equals((string) config('pluffy_admin.password'), $credentials['password'])
         ) {
             return back()
-                ->withErrors(['email' => 'Admin credentials are incorrect.'])
+                ->withErrors(['email' => 'Email atau password admin tidak sesuai.'])
                 ->onlyInput('email');
         }
 
