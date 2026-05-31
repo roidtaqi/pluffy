@@ -28,6 +28,10 @@ PHP-FPM serta Caddy. Pluffy menyediakan `railway.json` untuk menjalankan
 migrasi database sebelum deploy dan memeriksa endpoint `/up` sebelum versi baru
 diaktifkan.
 
+Backend ini tidak menjalankan `npm install`. API dan portal admin menggunakan
+Laravel Blade tanpa aset Vite, sehingga image Railway cukup dibangun dengan
+PHP dan Composer.
+
 ### 1. Buat Layanan Database
 
 Di Railway, buat project baru lalu tambahkan layanan PostgreSQL.
