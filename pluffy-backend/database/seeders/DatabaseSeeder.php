@@ -18,10 +18,10 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        User::create([
-            'id' => 1,
-            'name' => 'Roid Taqi',
+        User::firstOrCreate([
             'email' => 'roidtaqi@pluffy.cafe',
+        ], [
+            'name' => 'Roid Taqi',
             'password' => bcrypt(env('PLUFFY_DEMO_USER_PASSWORD', Str::password(24))),
             'loyalty_points' => 350,
             'loyalty_stamps' => 4,

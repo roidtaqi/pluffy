@@ -77,6 +77,27 @@ Before sharing the app publicly:
 - Run migrations and seeders as needed
 - Serve Laravel over HTTPS
 
+## Deploy Backend Stabil Dengan Railway
+
+Untuk menghindari build ulang APK setiap kali berpindah Wi-Fi, deploy backend
+Laravel ke Railway. Panduan lengkap tersedia di
+`pluffy-backend/README.md`.
+
+Konfigurasi yang sudah disiapkan:
+
+- `pluffy-backend/railway.json`
+- `pluffy-backend/.env.railway.example`
+- `pluffy-backend/railway/init-app.sh`
+- `pluffy-backend/railway/run-worker.sh`
+- `pluffy-backend/railway/run-cron.sh`
+
+Setelah Railway memberikan domain HTTPS, build APK production:
+
+```bash
+flutter build apk --release \
+  --dart-define=PLUFFY_API_BASE_URL=https://DOMAIN-BACKEND-KAMU/api
+```
+
 ### Backend Deploy Commands
 
 Run these on the production backend server from `pluffy-backend`:
