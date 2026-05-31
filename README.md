@@ -46,7 +46,7 @@ Then run Flutter with that IP:
 
 ```bash
 flutter run \
-  --dart-define=PLUFFY_API_BASE_URL=http://192.168.1.112:8000/api
+  --dart-define=PLUFFY_API_BASE_URL=http://192.168.1.11:8000/api
 ```
 
 If your Wi-Fi changes, the laptop IP may change too. Re-run `hostname -I`

@@ -9,6 +9,19 @@ import '../../cart/domain/cart_item.dart';
 import '../domain/order.dart';
 import 'admin_web_server.dart';
 
+String readyPickupNotificationMessage({
+  required String orderId,
+  String? outletName,
+}) {
+  final pickupCounter = outletName?.replaceFirst('Pluffy - ', '').trim();
+  final counterLabel = pickupCounter == null || pickupCounter.isEmpty
+      ? 'outlet pilihan Anda'
+      : pickupCounter;
+
+  return 'Silakan menuju konter $counterLabel. '
+      'Tunjukkan ID pesanan: $orderId!';
+}
+
 class OrdersState {
   final List<OrderModel> orders;
   final OrderModel? activeOrder; // Currently tracking order
@@ -351,6 +364,14 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
   void _triggerNotificationForStatus(String orderId, OrderStatus status) {
     String title = "";
     String message = "";
+    String? outletName;
+
+    for (final order in state.orders) {
+      if (order.id == orderId) {
+        outletName = order.outletName;
+        break;
+      }
+    }
 
     switch (status) {
       case OrderStatus.placed:
@@ -364,8 +385,10 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
         break;
       case OrderStatus.ready:
         title = "Hidangan Siap Diambil! 🥞🎉";
-        message =
-            "Silakan menuju konter Shibuya. Tunjukkan ID pesanan: $orderId!";
+        message = readyPickupNotificationMessage(
+          orderId: orderId,
+          outletName: outletName,
+        );
         break;
       case OrderStatus.completed:
         title = "Pesanan Selesai! ❤️";

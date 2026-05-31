@@ -7,6 +7,7 @@ import '../../../app/theme/app_colors.dart';
 import '../../../app/theme/app_text_styles.dart';
 import '../../../shared/data/mock_data.dart';
 import '../../../shared/providers/global_providers.dart';
+import '../../../shared/widgets/user_profile_avatar.dart';
 import '../../menu/presentation/product_detail_sheet.dart';
 import '../../outlet/presentation/outlet_selector_sheet.dart';
 import 'widgets/loyalty_card.dart';
@@ -62,7 +63,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final popularProducts = products.where((p) => p.isPopular).toList();
     final user = ref.watch(userProfileProvider).valueOrNull;
     final firstName = user?.name.split(' ').first ?? 'Guest';
-    final initial = firstName.isNotEmpty ? firstName[0].toUpperCase() : 'P';
 
     return Scaffold(
       appBar: AppBar(
@@ -131,22 +131,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       ),
                     ],
                   ),
-                  Container(
-                    width: 50,
-                    height: 50,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: AppColors.primary,
-                      border: Border.all(color: AppColors.border, width: 2),
-                    ),
-                    alignment: Alignment.center,
-                    child: Text(
-                      initial,
-                      style: AppTextStyles.h2.copyWith(
-                        color: AppColors.white,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
+                  UserProfileAvatar(
+                    name: user?.name ?? 'Pengguna Pluffy',
+                    size: 50,
                   ),
                 ],
               ),

@@ -3,13 +3,11 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:pluffy/main.dart';
 
 void main() {
-  testWidgets('Pluffy App boots successfully and shows splash branding', (WidgetTester tester) async {
+  testWidgets('Pluffy App boots successfully and shows splash branding', (
+    WidgetTester tester,
+  ) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(
-      const ProviderScope(
-        child: PluffyApp(),
-      ),
-    );
+    await tester.pumpWidget(const ProviderScope(child: PluffyApp()));
 
     // Verify that the splash screen branding elements are visible
     expect(find.text('PLUFFY'), findsOneWidget);

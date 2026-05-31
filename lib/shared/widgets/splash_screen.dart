@@ -45,13 +45,19 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     _fadeController.forward();
     _scaleController.forward();
 
-    // Navigate to the correct entry point after the splash moment.
-    Future.delayed(const Duration(milliseconds: 2500), () {
-      if (mounted) {
-        final isAuthenticated = ref.read(isAuthenticatedProvider);
-        context.go(isAuthenticated ? '/home' : '/auth');
-      }
-    });
+    _navigateAfterSplash();
+  }
+
+  Future<void> _navigateAfterSplash() async {
+    await Future.wait([
+      Future<void>.delayed(const Duration(milliseconds: 2500)),
+      ref.read(userProfileProvider.notifier).restoreSession(),
+    ]);
+
+    if (!mounted) return;
+
+    final isAuthenticated = ref.read(isAuthenticatedProvider);
+    context.go(isAuthenticated ? '/home' : '/auth');
   }
 
   @override

@@ -8,6 +8,8 @@ import '../../../shared/data/mock_data.dart';
 import '../../../shared/providers/global_providers.dart';
 import '../../../shared/widgets/custom_button.dart';
 import '../../../shared/widgets/custom_text_field.dart';
+import '../../../shared/widgets/user_profile_avatar.dart';
+import 'profile_settings_sheets.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
@@ -17,7 +19,7 @@ class ProfileScreen extends ConsumerWidget {
     ScaffoldMessenger.of(context).clearSnackBars();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Voucher code "$code" copied to clipboard!'),
+        content: Text('Kode voucher "$code" berhasil disalin.'),
         backgroundColor: AppColors.primary,
         behavior: SnackBarBehavior.floating,
         duration: const Duration(seconds: 2),
@@ -71,14 +73,14 @@ class ProfileScreen extends ConsumerWidget {
                       ),
                       const SizedBox(height: 20),
                       Text(
-                        'Edit Profile',
+                        'Ubah Profil',
                         style: AppTextStyles.h1.copyWith(
                           color: AppColors.primary,
                         ),
                       ),
                       const SizedBox(height: 6),
                       Text(
-                        'Perbarui nama, email, atau password akun Pluffy.',
+                        'Perbarui nama, email, atau kata sandi akun Pluffy.',
                         style: AppTextStyles.bodySecondary,
                       ),
                       const SizedBox(height: 20),
@@ -111,7 +113,7 @@ class ProfileScreen extends ConsumerWidget {
                       const SizedBox(height: 12),
                       CustomTextField(
                         controller: passwordController,
-                        hintText: 'Password baru (opsional)',
+                        hintText: 'Kata sandi baru (opsional)',
                         prefixIcon: Icons.lock_outline,
                         obscureText: true,
                         validator: (value) {
@@ -221,12 +223,12 @@ class ProfileScreen extends ConsumerWidget {
               ),
               const SizedBox(width: 12),
               Expanded(
-                child: Text('Logout dari akun?', style: AppTextStyles.h3),
+                child: Text('Keluar dari akun?', style: AppTextStyles.h3),
               ),
             ],
           ),
           content: Text(
-            'Kamu akan keluar dari akun Pluffy saat ini. Kamu perlu login kembali untuk melihat profil, poin loyalty, dan riwayat pesanan.',
+            'Kamu akan keluar dari akun Pluffy saat ini. Kamu perlu masuk kembali untuk melihat profil, poin loyalitas, dan riwayat pesanan.',
             style: AppTextStyles.bodySecondary,
           ),
           actionsPadding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
@@ -244,7 +246,7 @@ class ProfileScreen extends ConsumerWidget {
                 ),
               ),
               onPressed: () => Navigator.pop(dialogContext, true),
-              child: const Text('Logout'),
+              child: const Text('Keluar'),
             ),
           ],
         );
@@ -253,7 +255,9 @@ class ProfileScreen extends ConsumerWidget {
 
     if (shouldLogout != true || !context.mounted) return;
 
-    ref.read(userProfileProvider.notifier).logout();
+    await ref.read(userProfileProvider.notifier).logout();
+    if (!context.mounted) return;
+
     context.go('/auth');
   }
 
@@ -274,7 +278,7 @@ class ProfileScreen extends ConsumerWidget {
 
     if (user == null) {
       return Scaffold(
-        appBar: AppBar(title: const Text('My Profile'), centerTitle: true),
+        appBar: AppBar(title: const Text('Profil Saya'), centerTitle: true),
         body: Center(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 32),
@@ -298,13 +302,13 @@ class ProfileScreen extends ConsumerWidget {
                 Text('Login untuk melihat profil', style: AppTextStyles.h2),
                 const SizedBox(height: 8),
                 Text(
-                  'Profil, poin loyalty, dan riwayat pesanan akan aktif setelah kamu masuk atau membuat akun.',
+                  'Profil, poin loyalitas, dan riwayat pesanan akan aktif setelah kamu masuk atau membuat akun.',
                   textAlign: TextAlign.center,
                   style: AppTextStyles.bodySecondary,
                 ),
                 const SizedBox(height: 24),
                 CustomButton(
-                  text: 'Login / Register',
+                  text: 'Masuk / Daftar',
                   onPressed: () => context.go('/auth?redirect=/profile'),
                 ),
               ],
@@ -320,11 +324,11 @@ class ProfileScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('My Profile'),
+        title: const Text('Profil Saya'),
         centerTitle: true,
         actions: [
           IconButton(
-            tooltip: 'Edit profile',
+            tooltip: 'Ubah profil',
             onPressed: () => _showEditProfileSheet(context, ref, user),
             icon: const Icon(Icons.edit_outlined),
           ),
@@ -348,20 +352,7 @@ class ProfileScreen extends ConsumerWidget {
                 ),
                 child: Row(
                   children: [
-                    Container(
-                      width: 68,
-                      height: 68,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(color: AppColors.primary, width: 2),
-                        image: const DecorationImage(
-                          image: NetworkImage(
-                            'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200',
-                          ),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
+                    UserProfileAvatar(name: userName, size: 68),
                     const SizedBox(width: 16),
                     Expanded(
                       child: Column(
@@ -392,7 +383,7 @@ class ProfileScreen extends ConsumerWidget {
                                 ),
                                 const SizedBox(width: 6),
                                 Text(
-                                  membershipTier,
+                                  _membershipTierLabel(membershipTier),
                                   style: AppTextStyles.badgeText.copyWith(
                                     color: AppColors.cardBg,
                                     fontSize: 10,
@@ -405,7 +396,7 @@ class ProfileScreen extends ConsumerWidget {
                       ),
                     ),
                     IconButton(
-                      tooltip: 'Edit profile',
+                      tooltip: 'Ubah profil',
                       onPressed: () =>
                           _showEditProfileSheet(context, ref, user),
                       icon: const Icon(
@@ -441,10 +432,10 @@ class ProfileScreen extends ConsumerWidget {
                             size: 24,
                           ),
                           const SizedBox(height: 6),
-                          Text('$points pts', style: AppTextStyles.h3),
+                          Text('$points poin', style: AppTextStyles.h3),
                           const SizedBox(height: 2),
                           Text(
-                            'Loyalty Points',
+                            'Poin Loyalitas',
                             style: AppTextStyles.bodySecondary.copyWith(
                               fontSize: 11,
                             ),
@@ -473,7 +464,7 @@ class ProfileScreen extends ConsumerWidget {
                           Text('$stamps / 10', style: AppTextStyles.h3),
                           const SizedBox(height: 2),
                           Text(
-                            'Active Stamps',
+                            'Stempel Aktif',
                             style: AppTextStyles.bodySecondary.copyWith(
                               fontSize: 11,
                             ),
@@ -493,7 +484,7 @@ class ProfileScreen extends ConsumerWidget {
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: Align(
                 alignment: Alignment.centerLeft,
-                child: Text('My Voucher Wallet', style: AppTextStyles.h2),
+                child: Text('Dompet Voucher Saya', style: AppTextStyles.h2),
               ),
             ),
             const SizedBox(height: 10),
@@ -598,7 +589,7 @@ class ProfileScreen extends ConsumerWidget {
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: Align(
                 alignment: Alignment.centerLeft,
-                child: Text('Account Settings', style: AppTextStyles.h2),
+                child: Text('Pengaturan Akun', style: AppTextStyles.h2),
               ),
             ),
             const SizedBox(height: 10),
@@ -615,38 +606,44 @@ class ProfileScreen extends ConsumerWidget {
                   children: [
                     _buildSettingsTile(
                       icon: Icons.edit_outlined,
-                      title: 'Edit Profile',
-                      subtitle: 'Update name, email, and password',
+                      title: 'Ubah Profil',
+                      subtitle: 'Perbarui nama, email, dan kata sandi',
                       onTap: () => _showEditProfileSheet(context, ref, user),
                     ),
                     const Divider(indent: 54, endIndent: 16),
                     _buildSettingsTile(
                       icon: Icons.payment,
-                      title: 'Payment Methods',
-                      subtitle: 'Manage cards and Pluffy Pay wallet',
+                      title: 'Metode Pembayaran',
+                      subtitle: 'Kelola kartu dan dompet Pluffy Pay',
+                      onTap: () =>
+                          ProfileSettingsSheets.showPaymentMethods(context),
                     ),
                     const Divider(indent: 54, endIndent: 16),
                     _buildSettingsTile(
                       icon: Icons.location_on_outlined,
-                      title: 'Saved Addresses',
-                      subtitle: 'Add delivery locations',
+                      title: 'Alamat Tersimpan',
+                      subtitle: 'Tambahkan lokasi pengantaran',
+                      onTap: () =>
+                          ProfileSettingsSheets.showSavedAddresses(context),
                     ),
                     const Divider(indent: 54, endIndent: 16),
                     _buildSettingsTile(
                       icon: Icons.support_agent,
-                      title: 'Help & Customer Service',
-                      subtitle: 'Get support or contact outlets',
+                      title: 'Bantuan & Layanan Pelanggan',
+                      subtitle: 'Dapatkan bantuan atau hubungi outlet',
+                      onTap: () => ProfileSettingsSheets.showHelp(context),
                     ),
                     const Divider(indent: 54, endIndent: 16),
                     _buildSettingsTile(
                       icon: Icons.info_outline,
-                      title: 'About Pluffy Café',
-                      subtitle: 'Version 1.0.0 Stable Build',
+                      title: 'Tentang Pluffy Cafe',
+                      subtitle: 'Versi 1.0.0 - Rilis Stabil',
+                      onTap: () => ProfileSettingsSheets.showAbout(context),
                     ),
                     const Divider(indent: 54, endIndent: 16),
                     _buildSettingsTile(
                       icon: Icons.logout,
-                      title: 'Logout',
+                      title: 'Keluar',
                       subtitle: 'Keluar dari akun ini',
                       iconColor: AppColors.error,
                       onTap: () => _showLogoutConfirmation(context, ref),
@@ -691,5 +688,18 @@ class ProfileScreen extends ConsumerWidget {
       ),
       onTap: onTap,
     );
+  }
+
+  String _membershipTierLabel(String membershipTier) {
+    switch (membershipTier.toLowerCase()) {
+      case 'bronze member':
+        return 'Anggota Perunggu';
+      case 'silver member':
+        return 'Anggota Perak';
+      case 'gold member':
+        return 'Anggota Emas';
+      default:
+        return membershipTier;
+    }
   }
 }

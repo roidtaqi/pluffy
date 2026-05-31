@@ -11,7 +11,7 @@ class MockData {
       id: 'out_juanda',
       name: 'Pluffy - Juanda Street',
       address: 'Jalan Abdul Muis No. 23, Jakarta (Juanda Plaza)',
-      phone: '+81 3-1234-5678',
+      phone: '+62 21 1234 5678',
       operatingHours: '08:00 AM - 10:00 PM',
       distanceKm: 0.4,
     ),
@@ -19,7 +19,7 @@ class MockData {
       id: 'out_pelita',
       name: 'Pluffy - Pelita Square',
       address: 'Jl. Pelita Raya No. 45, Jakarta (Pelita Square Mall)',
-      phone: '+81 3-8765-4321',
+      phone: '+62 21 8765 4321',
       operatingHours: '09:00 AM - 09:30 PM',
       distanceKm: 1.2,
     ),
@@ -27,7 +27,7 @@ class MockData {
       id: 'out_sebrang',
       name: 'Pluffy - Sebrang Street',
       address: 'Jl. Sebrang No. 10, Jakarta (Sebrang Street Food District)',
-      phone: '+81 3-5555-9999',
+      phone: '+62 21 5555 9999',
       operatingHours: '10:00 AM - 09:00 PM',
       distanceKm: 2.5,
     ),
@@ -232,23 +232,23 @@ class MockData {
   // Active Promo banners
   static const List<Map<String, String>> promoBanners = [
     {
-      'title': 'Seasonal Sakura Special',
+      'title': 'Promo Sakura Musiman',
       'description':
-          'Enjoy 20% off all Lychee White Tea combinations this spring season!',
+          'Nikmati diskon 20% untuk semua kombinasi Lychee White Tea musim ini!',
       'code': 'SAKURA20',
       'image': '🌸',
     },
     {
-      'title': 'Soufflé Happy Hours',
+      'title': 'Jam Bahagia Soufflé',
       'description':
-          'Buy 1 Original Soufflé and get a free beverage of your choice. Mon-Fri 2PM-5PM.',
+          'Beli 1 Original Soufflé dan dapatkan minuman pilihan gratis. Senin-Jumat pukul 14.00-17.00.',
       'code': 'SOUFFLELOVE',
       'image': '🥞',
     },
     {
-      'title': 'Gold Member Reward',
+      'title': 'Hadiah Anggota Emas',
       'description':
-          'Thank you for 600+ points! Claim a free Melonpan on your next checkout.',
+          'Terima kasih atas 600+ poin kamu! Klaim Melonpan gratis saat pembayaran berikutnya.',
       'code': 'GOLDFREE',
       'image': '✨',
     },

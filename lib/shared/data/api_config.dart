@@ -3,7 +3,7 @@ class ApiConfig {
 
   static const String baseUrl = String.fromEnvironment(
     'PLUFFY_API_BASE_URL',
-    defaultValue: 'http://192.168.1.112:8000/api',
+    defaultValue: 'http://192.168.1.11:8000/api',
   );
 
   static Uri uri(String path) {

@@ -1,9 +1,13 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
+
 import '../../features/outlet/domain/outlet.dart';
 import '../../features/menu/domain/product.dart';
 import '../data/api_config.dart';
+import '../data/auth_session_storage.dart';
 import '../data/mock_data.dart';
 
 // Provider for the currently selected outlet
@@ -45,6 +49,17 @@ class UserProfile {
     );
   }
 
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'email': email,
+      'loyalty_points': loyaltyPoints,
+      'loyalty_stamps': loyaltyStamps,
+      'membership_tier': membershipTier,
+    };
+  }
+
   UserProfile copyWith({
     int? id,
     String? name,
@@ -65,13 +80,22 @@ class UserProfile {
 }
 
 class UserProfileNotifier extends StateNotifier<AsyncValue<UserProfile?>> {
-  UserProfileNotifier() : super(const AsyncValue.data(null));
+  final AuthSessionStorage _sessionStorage;
+  late final Future<void> _restoreFuture;
 
   String? _authToken;
+
+  UserProfileNotifier({AuthSessionStorage? sessionStorage})
+    : _sessionStorage = sessionStorage ?? AuthSessionStorage(),
+      super(const AsyncValue.loading()) {
+    _restoreFuture = _restoreSession();
+  }
 
   UserProfile? get currentUser => state.valueOrNull;
 
   bool get isAuthenticated => currentUser != null;
+
+  Future<void> restoreSession() => _restoreFuture;
 
   Map<String, String> get authHeaders => {
     'Content-Type': 'application/json',
@@ -121,6 +145,7 @@ class UserProfileNotifier extends StateNotifier<AsyncValue<UserProfile?>> {
         final token = body['token'];
         _authToken = token is String && token.isNotEmpty ? token : null;
         state = AsyncValue.data(user);
+        await _persistSession();
         return null;
       }
 
@@ -165,6 +190,7 @@ class UserProfileNotifier extends StateNotifier<AsyncValue<UserProfile?>> {
         if (body['success'] == true) {
           final user = UserProfile.fromJson(body['data']);
           state = AsyncValue.data(user);
+          await _persistSession();
           return null;
         }
       }
@@ -179,11 +205,69 @@ class UserProfileNotifier extends StateNotifier<AsyncValue<UserProfile?>> {
 
   void updateProfile(UserProfile newUser) {
     state = AsyncValue.data(newUser);
+    unawaited(_persistSession());
   }
 
-  void logout() {
+  Future<void> logout() async {
     _authToken = null;
     state = const AsyncValue.data(null);
+    await _clearStoredSession();
+  }
+
+  Future<void> _restoreSession() async {
+    try {
+      final storedSession = await _sessionStorage.read();
+      if (storedSession == null) {
+        state = const AsyncValue.data(null);
+        return;
+      }
+
+      _authToken = storedSession.token;
+      final cachedUser = UserProfile.fromJson(storedSession.userJson);
+      state = AsyncValue.data(cachedUser);
+
+      final response = await http.get(
+        ApiConfig.uri('users/${cachedUser.id}'),
+        headers: authHeaders,
+      );
+
+      if (response.statusCode == 200) {
+        final body = jsonDecode(response.body);
+        if (body is Map<String, dynamic> && body['success'] == true) {
+          final freshUser = UserProfile.fromJson(body['data']);
+          state = AsyncValue.data(freshUser);
+          await _persistSession();
+        }
+        return;
+      }
+
+      if (response.statusCode == 401 || response.statusCode == 403) {
+        _authToken = null;
+        state = const AsyncValue.data(null);
+        await _sessionStorage.clear();
+      }
+    } catch (_) {
+      state = AsyncValue.data(currentUser);
+    }
+  }
+
+  Future<void> _persistSession() async {
+    final token = _authToken;
+    final user = currentUser;
+
+    if (token == null || user == null) {
+      return;
+    }
+
+    try {
+      await _sessionStorage.save(token: token, userJson: user.toJson());
+    } catch (_) {}
+  }
+
+  Future<void> _clearStoredSession() async {
+    try {
+      await _sessionStorage.clear();
+    } catch (_) {}
   }
 
   String _errorMessageFromBody(dynamic body, {required String fallback}) {

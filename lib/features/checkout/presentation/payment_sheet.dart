@@ -7,6 +7,7 @@ import '../../../shared/providers/global_providers.dart';
 import '../../../shared/widgets/custom_button.dart';
 import '../../cart/data/cart_repository.dart';
 import '../../orders/data/orders_repository.dart';
+import '../../profile/data/profile_preferences.dart';
 
 class PaymentSheet extends ConsumerStatefulWidget {
   const PaymentSheet({super.key});
@@ -17,9 +18,12 @@ class PaymentSheet extends ConsumerStatefulWidget {
       isScrollControlled: true,
       backgroundColor: AppColors.background,
       builder: (context) {
-        return const FractionallySizedBox(
-          heightFactor: 0.6,
-          child: PaymentSheet(),
+        return const SafeArea(
+          top: false,
+          child: FractionallySizedBox(
+            heightFactor: 0.86,
+            child: PaymentSheet(),
+          ),
         );
       },
     );
@@ -30,29 +34,18 @@ class PaymentSheet extends ConsumerStatefulWidget {
 }
 
 class _PaymentSheetState extends ConsumerState<PaymentSheet> {
-  String _selectedMethodId = 'wallet';
+  late String _selectedMethodId;
+  bool _didChoosePaymentMethod = false;
   bool _isPaying = false;
 
-  final List<Map<String, dynamic>> _paymentMethods = [
-    {
-      'id': 'wallet',
-      'title': 'Pluffy Pay',
-      'subtitle': 'Saldo: Rp 500.000',
-      'icon': Icons.account_balance_wallet_outlined,
-    },
-    {
-      'id': 'card',
-      'title': 'Kartu Kredit/Debit',
-      'subtitle': 'Visa berakhiran 4321',
-      'icon': Icons.credit_card_outlined,
-    },
-    {
-      'id': 'gpay',
-      'title': 'Google Pay',
-      'subtitle': 'Pembayaran cepat dan aman',
-      'icon': Icons.payment_outlined,
-    },
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _selectedMethodId = ref
+        .read(profilePreferencesProvider)
+        .defaultPaymentMethod
+        .id;
+  }
 
   Future<void> _processPayment() async {
     final cart = ref.read(cartProvider);
@@ -74,8 +67,14 @@ class _PaymentSheetState extends ConsumerState<PaymentSheet> {
 
     if (!mounted) return;
 
-    final selectedMethod = _paymentMethods.firstWhere(
-      (m) => m['id'] == _selectedMethodId,
+    final preferences = ref.read(profilePreferencesProvider);
+    final paymentMethods = preferences.paymentMethods;
+    final selectedMethodId = _didChoosePaymentMethod
+        ? _selectedMethodId
+        : preferences.defaultPaymentMethod.id;
+    final selectedMethod = paymentMethods.firstWhere(
+      (method) => method.id == selectedMethodId,
+      orElse: () => paymentMethods.first,
     );
 
     // 1. Write order to global orders database
@@ -89,7 +88,7 @@ class _PaymentSheetState extends ConsumerState<PaymentSheet> {
           serviceFee: cart.serviceFee,
           total: cart.total,
           outletName: activeOutlet.name,
-          paymentMethod: selectedMethod['title'],
+          paymentMethod: selectedMethod.title,
           voucherCode: cart.appliedVoucherCode,
           userId: user.id,
         );
@@ -111,6 +110,11 @@ class _PaymentSheetState extends ConsumerState<PaymentSheet> {
   @override
   Widget build(BuildContext context) {
     final cart = ref.watch(cartProvider);
+    final preferences = ref.watch(profilePreferencesProvider);
+    final paymentMethods = preferences.paymentMethods;
+    final selectedMethodId = _didChoosePaymentMethod
+        ? _selectedMethodId
+        : preferences.defaultPaymentMethod.id;
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 24.0),
@@ -145,19 +149,21 @@ class _PaymentSheetState extends ConsumerState<PaymentSheet> {
           // Payment List
           Expanded(
             child: ListView.separated(
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: _paymentMethods.length,
+              physics: const BouncingScrollPhysics(),
+              padding: const EdgeInsets.only(bottom: 8),
+              itemCount: paymentMethods.length,
               separatorBuilder: (context, index) => const SizedBox(height: 12),
               itemBuilder: (context, index) {
-                final method = _paymentMethods[index];
-                final isSelected = _selectedMethodId == method['id'];
+                final method = paymentMethods[index];
+                final isSelected = selectedMethodId == method.id;
 
                 return GestureDetector(
                   onTap: _isPaying
                       ? null
                       : () {
                           setState(() {
-                            _selectedMethodId = method['id'];
+                            _selectedMethodId = method.id;
+                            _didChoosePaymentMethod = true;
                           });
                         },
                   child: Container(
@@ -183,7 +189,7 @@ class _PaymentSheetState extends ConsumerState<PaymentSheet> {
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
-                            method['icon'] as IconData,
+                            _paymentMethodIcon(method.type),
                             color: isSelected
                                 ? AppColors.primary
                                 : AppColors.textSecondary,
@@ -196,7 +202,7 @@ class _PaymentSheetState extends ConsumerState<PaymentSheet> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                method['title'] as String,
+                                method.title,
                                 style: AppTextStyles.h3.copyWith(
                                   color: isSelected
                                       ? AppColors.primary
@@ -205,7 +211,7 @@ class _PaymentSheetState extends ConsumerState<PaymentSheet> {
                               ),
                               const SizedBox(height: 2),
                               Text(
-                                method['subtitle'] as String,
+                                method.subtitle,
                                 style: AppTextStyles.bodySecondary.copyWith(
                                   fontSize: 12,
                                 ),
@@ -235,7 +241,7 @@ class _PaymentSheetState extends ConsumerState<PaymentSheet> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('Total Payment', style: AppTextStyles.bodyMedium),
+                    Text('Total Pembayaran', style: AppTextStyles.bodyMedium),
                     Text(
                       formatPrice(cart.total),
                       style: AppTextStyles.priceLarge.copyWith(fontSize: 20),
@@ -256,5 +262,16 @@ class _PaymentSheetState extends ConsumerState<PaymentSheet> {
         ],
       ),
     );
+  }
+
+  IconData _paymentMethodIcon(SavedPaymentMethodType type) {
+    switch (type) {
+      case SavedPaymentMethodType.wallet:
+        return Icons.account_balance_wallet_outlined;
+      case SavedPaymentMethodType.card:
+        return Icons.credit_card_outlined;
+      case SavedPaymentMethodType.digitalWallet:
+        return Icons.payment_outlined;
+    }
   }
 }
